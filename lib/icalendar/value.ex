@@ -6,6 +6,14 @@ end
 alias ICalendar.Value
 
 
+defimpl Value, for: BitString do
+  def to_ics(x) do
+    x
+    |> String.replace(~S"\n", ~S"\\n")
+    |> String.replace("\n", ~S"\n")
+  end
+end
+
 defimpl Value, for: Tuple do
   defmacro elem2(x, i1, i2) do
     quote do
