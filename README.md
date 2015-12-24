@@ -1,5 +1,7 @@
 # ICalendar
 
+[![Build Status](https://travis-ci.org/lpil/icalendar.svg?branch=master)](https://travis-ci.org/lpil/icalendar)
+
 A small library for generating ICalendar files.
 
 https://en.wikipedia.org/wiki/ICalendar
