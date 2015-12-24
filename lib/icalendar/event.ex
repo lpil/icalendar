@@ -13,7 +13,8 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
   alias ICalendar.Util.KV
 
   @mappings %{
-    "SUMMARY" => :summary,
+    description: "DESCRIPTION",
+    summary:     "SUMMARY",
   }
 
   def to_ics(event) do
@@ -27,10 +28,11 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
   defp to_kvs(event) do
     @mappings
     |> Enum.map(&to_kv(&1, event))
+    |> Enum.sort
     |> Enum.join
   end
 
-  defp to_kv({name, key}, event) do
+  defp to_kv({key, name}, event) do
     {:ok, value} = Map.fetch( event, key )
     KV.build( name, value )
   end

@@ -8,12 +8,13 @@ defmodule ICalendar do
 end
 
 defimpl ICalendar.Serialize, for: ICalendar do
-  def to_ics(_calendar) do
+  def to_ics(calendar) do
+  events = Enum.map( calendar.events, &ICalendar.Serialize.to_ics/1 )
   """
   BEGIN:VCALENDAR
   CALSCALE:GREGORIAN
   VERSION:2.0
-  END:VCALENDAR
+  #{events}END:VCALENDAR
   """
   end
 end

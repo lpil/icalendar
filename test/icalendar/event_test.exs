@@ -11,10 +11,14 @@ defmodule ICalendar.EventTest do
     """
   end
 
-  test "ICalendar.to_ics/1 of with summary" do
-    ics = %Event{ summary: "Going fishing" } |> ICalendar.to_ics
+  test "ICalendar.to_ics/1 of with some attributes" do
+    ics = %Event{
+      summary:     "Going fishing",
+      description: "Escape from the world. Stare at some water.",
+    } |> ICalendar.to_ics
     assert ics == """
     BEGIN:VEVENT
+    DESCRIPTION:Escape from the world. Stare at some water.
     SUMMARY:Going fishing
     END:VEVENT
     """

@@ -4,14 +4,12 @@
 
 A small library for generating ICalendar files.
 
-https://en.wikipedia.org/wiki/ICalendar
-
 ## Usage
 
 ```elixir
 events = [
   %ICalendar.Event{
-    summary: "Film with Amy and Adam"
+    summary: "Film with Amy and Adam",
     start:  {{2015, 12, 24}, {8, 30, 00}},
     finish: {{2015, 12, 24}, {8, 45, 00}},
     description: """
@@ -30,3 +28,8 @@ events = [
 calendar   = %ICalendar{ events: events }
 ics_string = ICalendar.to_ics( calendar )
 ```
+
+## Homework
+
+- https://en.wikipedia.org/wiki/ICalendar
+- http://www.kanzaki.com/docs/ical/dateTime.html
