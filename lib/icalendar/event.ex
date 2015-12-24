@@ -11,10 +11,13 @@ end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do
   alias ICalendar.Util.KV
+  alias ICalendar.Value
 
   @mappings %{
     description: "DESCRIPTION",
     summary:     "SUMMARY",
+    start:       "DTSTART",
+    finish:      "DTEND",
   }
 
   def to_ics(event) do
@@ -33,7 +36,8 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
   end
 
   defp to_kv({key, name}, event) do
-    {:ok, value} = Map.fetch( event, key )
+    {:ok, raw_value} = Map.fetch( event, key )
+    value = Value.to_ics( raw_value )
     KV.build( name, value )
   end
 end

@@ -25,8 +25,25 @@ events = [
     """
   }
 ]
-calendar   = %ICalendar{ events: events }
-ics_string = ICalendar.to_ics( calendar )
+ics = %ICalendar{ events: events } |> ICalendar.to_ics
+File.write!("calendar.isc", ics)
+
+# BEGIN:VCALENDAR
+# CALSCALE:GREGORIAN
+# VERSION:2.0
+# BEGIN:VEVENT
+# DESCRIPTION:Let's go see Star Wars.
+# DTEND:20151224T084500Z
+# DTSTART:20151224T083000Z
+# SUMMARY:Film with Amy and Adam
+# END:VEVENT
+# BEGIN:VEVENT
+# DESCRIPTION:A big long meeting with lots of details.
+# DTEND:20151224T223000Z
+# DTSTART:20151224T190000Z
+# SUMMARY:Morning meeting
+# END:VEVENT
+# END:VCALENDAR
 ```
 
 ## Homework

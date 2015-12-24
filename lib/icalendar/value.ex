@@ -49,7 +49,7 @@ defimpl Value, for: Tuple do
     hour  = h  |> to_string |> rjust(2, ?0)
     min   = m  |> to_string |> rjust(2, ?0)
     sec   = s  |> to_string |> rjust(2, ?0)
-    year <> month <> day <> "T" <> hour <> min <> sec
+    year <> month <> day <> "T" <> hour <> min <> sec <> "Z"
   end
 
   def to_ics(x), do: x
