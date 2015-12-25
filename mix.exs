@@ -29,7 +29,7 @@ defmodule ICalendar.Mixfile do
 
   defp deps do
     [
-      # Test coverage checker
+      # Code style linter
       {:dogma, only: ~w(dev test)a},
       # Automatic test runner
       {:mix_test_watch, only: :dev},
