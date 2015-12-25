@@ -4,21 +4,14 @@ defmodule ICalendar.Event do
   """
 
   defstruct summary:     nil,
-            start:       nil,
-            finish:      nil,
+            dtstart:     nil,
+            dtend:       nil,
             description: nil
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do
   alias ICalendar.Util.KV
   alias ICalendar.Value
-
-  @mappings %{
-    description: "DESCRIPTION",
-    summary:     "SUMMARY",
-    start:       "DTSTART",
-    finish:      "DTEND",
-  }
 
   def to_ics(event) do
     contents = to_kvs(event)
@@ -29,14 +22,16 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
   end
 
   defp to_kvs(event) do
-    @mappings
-    |> Enum.map(&to_kv(&1, event))
+    event
+    |> Map.from_struct
+    |> Enum.map(&to_kv/1)
     |> Enum.sort
     |> Enum.join
   end
 
-  defp to_kv({key, name}, event) do
-    {:ok, raw_value} = Map.fetch( event, key )
+
+  defp to_kv({key, raw_value}) do
+    name  = key |> to_string |> String.upcase
     value = Value.to_ics( raw_value )
     KV.build( name, value )
   end

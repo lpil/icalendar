@@ -24,10 +24,10 @@ defmodule ICalendar.EventTest do
     """
   end
 
-  test "ICalendar.to_ics/1 with start and finish" do
+  test "ICalendar.to_ics/1 with start and end" do
     ics = %Event{
-      start:  {{2015, 12, 24}, {8, 30, 00}},
-      finish: {{2015, 12, 24}, {8, 45, 00}},
+      dtstart: {{2015, 12, 24}, {8, 30, 00}},
+      dtend:   {{2015, 12, 24}, {8, 45, 00}},
     } |> ICalendar.to_ics
     assert ics == """
     BEGIN:VEVENT
