@@ -46,4 +46,30 @@ defmodule ICalendarTest do
     END:VCALENDAR
     """
   end
+
+  test "Icalnder.to_ics/1 with location and sanitization" do
+    events = [
+      %ICalendar.Event{
+        summary: "Film with Amy and Adam",
+        dtstart: {{2015, 12, 24}, {8, 30, 00}},
+        dtend:   {{2015, 12, 24}, {8, 45, 00}},
+        description: "Let's go see Star Wars, and have fun.",
+        location: "123 Fun Street, Toronto ON, Canada"
+      },
+    ]
+    ics = %ICalendar{ events: events } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VCALENDAR
+    CALSCALE:GREGORIAN
+    VERSION:2.0
+    BEGIN:VEVENT
+    DESCRIPTION:Let's go see Star Wars\\, and have fun.
+    DTEND:20151224T084500Z
+    DTSTART:20151224T083000Z
+    LOCATION:123 Fun Street\\, Toronto ON\\, Canada
+    SUMMARY:Film with Amy and Adam
+    END:VEVENT
+    END:VCALENDAR
+    """
+  end
 end
