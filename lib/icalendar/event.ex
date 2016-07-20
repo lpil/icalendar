@@ -30,7 +30,6 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
     |> Enum.join
   end
 
-
   defp to_kv({key, raw_value}) do
     name  = key |> to_string |> String.upcase
     value = Value.to_ics( raw_value )
