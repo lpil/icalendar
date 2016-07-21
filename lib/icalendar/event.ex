@@ -6,7 +6,8 @@ defmodule ICalendar.Event do
   defstruct summary:     nil,
             dtstart:     nil,
             dtend:       nil,
-            description: nil
+            description: nil,
+            location:    nil
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do
@@ -28,7 +29,6 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
     |> Enum.sort
     |> Enum.join
   end
-
 
   defp to_kv({key, raw_value}) do
     name  = key |> to_string |> String.upcase
