@@ -2,6 +2,7 @@ defmodule ICalendar.EventTest do
   use ExUnit.Case
 
   alias ICalendar.Event
+  alias ICalendar.Alert
 
   test "ICalendar.to_ics/1 of event" do
     ics = %Event{} |> ICalendar.to_ics
@@ -31,6 +32,26 @@ defmodule ICalendar.EventTest do
     } |> ICalendar.to_ics
     assert ics == """
     BEGIN:VEVENT
+    DTEND:20151224T084500Z
+    DTSTART:20151224T083000Z
+    END:VEVENT
+    """
+  end
+
+  test "ICalendar.to_ics/1 with alerts" do
+    alert = %Alert{minutes_before: 23}
+    ics = %Event{
+      dtstart: {{2015, 12, 24}, {8, 30, 00}},
+      dtend:   {{2015, 12, 24}, {8, 45, 00}},
+      alerts:  [alert]
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    BEGIN:VALARM
+    TRIGGER:-PT23M
+    ACTION:DISPLAY
+    DESCRIPTION:Reminder
+    END:VALARM
     DTEND:20151224T084500Z
     DTSTART:20151224T083000Z
     END:VEVENT

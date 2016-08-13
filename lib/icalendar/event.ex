@@ -7,7 +7,8 @@ defmodule ICalendar.Event do
             dtstart:     nil,
             dtend:       nil,
             description: nil,
-            location:    nil
+            location:    nil,
+            alerts:      nil
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do
@@ -26,6 +27,17 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
     event
     |> Map.from_struct
     |> Enum.map(&to_kv/1)
+    |> Enum.sort
+    |> Enum.join
+  end
+
+  defp to_kv({:alerts, nil}) do
+    ""
+  end
+
+  defp to_kv({:alerts, alerts}) do
+    alerts
+    |> Enum.map(&ICalendar.to_ics/1)
     |> Enum.sort
     |> Enum.join
   end
