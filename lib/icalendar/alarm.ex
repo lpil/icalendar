@@ -1,18 +1,18 @@
-defmodule ICalendar.Alert do
+defmodule ICalendar.Alarm do
   @moduledoc """
-  Events have alerts.
+  Events have alarms.
   """
 
   defstruct minutes_before: 60
 end
 
-defimpl ICalendar.Serialize, for: ICalendar.Alert do
+defimpl ICalendar.Serialize, for: ICalendar.Alarm do
   alias ICalendar.Value
 
-  def to_ics(alert) do
+  def to_ics(alarm) do
     """
     BEGIN:VALARM
-    TRIGGER:-PT#{Value.to_ics( alert.minutes_before )}M
+    TRIGGER:-PT#{Value.to_ics( alarm.minutes_before )}M
     ACTION:DISPLAY
     DESCRIPTION:Reminder
     END:VALARM
