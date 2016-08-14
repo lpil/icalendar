@@ -10,9 +10,10 @@ defimpl ICalendar.Serialize, for: ICalendar.Alarm do
   alias ICalendar.Value
 
   def to_ics(alarm) do
+    minutes = alarm.minutes_before |> abs |> Value.to_ics
     """
     BEGIN:VALARM
-    TRIGGER:-PT#{Value.to_ics( alarm.minutes_before )}M
+    TRIGGER:-PT#{minutes}M
     ACTION:DISPLAY
     DESCRIPTION:Reminder
     END:VALARM

@@ -13,4 +13,15 @@ defmodule ICalendar.AlarmTest do
     END:VALARM
     """
   end
+
+  test "use absolute value of minutes - negative numbers are not allowed" do
+    ics = %Alarm{minutes_before: -5} |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VALARM
+    TRIGGER:-PT5M
+    ACTION:DISPLAY
+    DESCRIPTION:Reminder
+    END:VALARM
+    """
+  end
 end
