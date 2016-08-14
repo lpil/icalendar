@@ -20,7 +20,8 @@ events = [
     dtstart: {{2015, 12, 24}, {19, 00, 00}},
     dtend:   {{2015, 12, 24}, {22, 30, 00}},
     description: "A big long meeting with lots of details.",
-    location: "456 Boring Street, Toronto ON, Canada"
+    location: "456 Boring Street, Toronto ON, Canada",
+    alarms: [%ICalendar.Alarm{minutes_before: 23}]
   },
 ]
 ics = %ICalendar{ events: events } |> ICalendar.to_ics
@@ -37,6 +38,11 @@ File.write!("calendar.ics", ics)
 # SUMMARY:Film with Amy and Adam
 # END:VEVENT
 # BEGIN:VEVENT
+# BEGIN:VALARM
+# TRIGGER:-PT23M
+# ACTION:DISPLAY
+# DESCRIPTION:Reminder
+# END:VALARM
 # DESCRIPTION:A big long meeting with lots of details.
 # DTEND:20151224T223000Z
 # DTSTART:20151224T190000Z
