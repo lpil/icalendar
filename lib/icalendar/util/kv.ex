@@ -15,11 +15,11 @@ defmodule ICalendar.Util.KV do
   end
 
   def build("LOCATION" = key, value ) do
-    build_sanitized(key,value)
+    build_sanitized(key, value)
   end
 
   def build("DESCRIPTION" = key, value ) do
-    build_sanitized(key,value)
+    build_sanitized(key, value)
   end
 
   def build(key, value) do

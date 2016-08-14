@@ -30,14 +30,14 @@ defmodule ICalendar.Mixfile do
   defp deps do
     [
       # Code style linter
-      {:dogma, only: ~w(dev test)a},
+      {:dogma, ">= 0.0.0", only: ~w(dev test)a},
       # Automatic test runner
-      {:mix_test_watch, only: :dev},
+      {:mix_test_watch, ">= 0.0.0", only: :dev},
 
       # Markdown processor
-      {:earmark, only: :dev},
+      {:earmark, ">= 0.0.0", only: :dev},
       # Documentation generator
-      {:ex_doc, only: :dev},
+      {:ex_doc, ">= 0.0.0", only: :dev},
     ]
   end
 end
