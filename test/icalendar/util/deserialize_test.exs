@@ -27,4 +27,22 @@ defmodule ICalendar.Util.DeserializeTest do
     }
   end
 
+  test "Handles empty calendars correctly" do
+    event =
+      """
+      BEGIN:VEVENT
+      END:VEVENT
+      """
+      |> String.trim
+      |> String.split("\n")
+      |> Deserialize.build_event
+
+    assert event == %Event{
+      dtstart: nil,
+      dtend: nil,
+      summary: nil,
+      description: nil
+    }
+  end
+
 end

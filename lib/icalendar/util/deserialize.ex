@@ -31,47 +31,44 @@ defmodule ICalendar.Util.Deserialize do
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
+  This function is designed to parse iCal datetime strings into erlang dates.
+
+  It should be able to handle dates from the past:
+
   iex> ICalendar.Util.Deserialize.to_date("19930407T153022Z")
   {{1993, 4, 7}, {15, 30, 22}}
+
+  As well as the future:
+
+  iex>  ICalendar.Util.Deserialize.to_date("39930407T153022Z")
+  {{3993, 4, 7}, {15, 30, 22}}
+
+  And should return nil for incorrect dates:
+
+  iex> ICalendar.Util.Deserialize.to_date("1993/04/07")
+  {:error, "Timestamp is not in the correct format: 1993/04/07"}
+
   """
   def to_date(date_string) do
+    date_regex = ~S/(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})/
+    time_regex = ~S/(?<hour>\d{2})(?<minute>\d{2})(?<second>\d{2})/
+    {:ok, regex} = Regex.compile("#{date_regex}T#{time_regex}Z")
 
-    [date, time] =
-      date_string
-      |> String.upcase
-      |> String.split(["T", "Z"], trim: true)
+    case Regex.named_captures(regex, date_string) do
+      %{
+        "year" => year, "month" => month, "day" => day,
+        "hour" => hour, "minute" => minute, "second" => second} ->
 
-    year =
-      date
-      |> String.slice(0..3)
-      |> String.to_integer
+        date = {
+          String.to_integer(year), String.to_integer(month),
+          String.to_integer(day)}
 
-    month =
-      date
-      |> String.slice(4..5)
-      |> String.to_integer
+        time = {
+          String.to_integer(hour), String.to_integer(minute),
+          String.to_integer(second)}
+        {date, time}
 
-    day =
-      date
-      |> String.slice(6..7)
-      |> String.to_integer
-
-    hour =
-      time
-      |> String.slice(0..1)
-      |> String.to_integer
-
-    minute =
-      time
-      |> String.slice(2..3)
-      |> String.to_integer
-
-    second =
-      time
-      |> String.slice(4..5)
-      |> String.to_integer
-
-    {{year, month, day}, {hour, minute, second}}
+      _ -> {:error, "Timestamp is not in the correct format: #{date_string}"}
+    end
   end
-
 end

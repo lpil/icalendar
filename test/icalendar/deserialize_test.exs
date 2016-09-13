@@ -3,19 +3,6 @@ defmodule ICalendar.DeserializeTest do
 
   alias ICalendar.Event
 
-  test "ICalendar.from_ics/1 with empty icalendar string" do
-    ics = """
-    BEGIN:VEVENT
-    END:VEVENT
-    """
-    assert ICalendar.from_ics(ics) == %Event{
-      dtstart: nil,
-      dtend: nil,
-      summary: nil,
-      description: nil
-    }
-  end
-
   test "ICalendar.from_ics/1" do
     ics = """
     BEGIN:VEVENT
@@ -28,10 +15,9 @@ defmodule ICalendar.DeserializeTest do
     event = ICalendar.from_ics(ics)
     assert event == %Event{
       dtstart: {{2015, 12, 24}, {8, 30, 00}},
-      dtend: {{2015, 12, 24}, {8, 45, 00}}, 
+      dtend: {{2015, 12, 24}, {8, 45, 00}},
       summary: "Going fishing",
       description: "Escape from the world. Stare at some water."
     }
   end
-
 end
