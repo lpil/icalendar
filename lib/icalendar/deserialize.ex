@@ -18,10 +18,14 @@ defimpl ICalendar.Deserialize, for: BitString do
     {String.upcase(key), value}
   end
 
-  def build_event({"DESCRIPTION", description}, acc), do: Map.put(acc, :description, description)
-  def build_event({"SUMMARY", summary}, acc), do: Map.put(acc, :summary, summary)
-  def build_event({"DTSTART", dtstart}, acc), do: Map.put(acc, :dtstart, to_date(dtstart))
-  def build_event({"DTEND", dtend}, acc), do: Map.put(acc, :dtend, to_date(dtend))
+  def build_event({"DESCRIPTION", description}, acc) do
+    %{acc | description: description}
+  end
+  def build_event({"DTSTART", dtstart}, acc) do
+    %{acc | dtstart: to_date(dtstart)}
+  end
+  def build_event({"DTEND", dtend}, acc), do: %{acc | dtend: to_date(dtend)}
+  def build_event({"SUMMARY", summary}, acc), do: %{acc | summary: summary}
   def build_event(_, acc), do: acc
 
   def to_date(date_string) do
@@ -31,13 +35,35 @@ defimpl ICalendar.Deserialize, for: BitString do
       |> String.upcase
       |> String.split(["T", "Z"], trim: true)
 
-    year  = String.slice(date, 0..3) |> String.to_integer
-    month = String.slice(date, 4..5) |> String.to_integer
-    day   = String.slice(date, 6..7) |> String.to_integer
+    year =
+      date
+      |> String.slice(0..3)
+      |> String.to_integer
 
-    hour   = String.slice(time, 0..1) |> String.to_integer
-    minute = String.slice(time, 2..3) |> String.to_integer
-    second = String.slice(time, 4..5) |> String.to_integer
+    month =
+      date
+      |> String.slice(4..5)
+      |> String.to_integer
+
+    day =
+      date
+      |> String.slice(6..7)
+      |> String.to_integer
+
+    hour =
+      time
+      |> String.slice(0..1)
+      |> String.to_integer
+
+    minute =
+      time
+      |> String.slice(2..3)
+      |> String.to_integer
+
+    second =
+      time
+      |> String.slice(4..5)
+      |> String.to_integer
 
     {{year, month, day}, {hour, minute, second}}
   end
