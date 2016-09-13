@@ -48,7 +48,8 @@ defimpl Value, for: Tuple do
   end
 
   def to_ics(timestamp) when is_datetime_tuple(timestamp) do
-    Timex.to_datetime(timestamp)
+    timestamp
+    |> Timex.to_datetime
     |> Value.to_ics
   end
 
