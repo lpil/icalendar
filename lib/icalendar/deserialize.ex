@@ -7,10 +7,10 @@ defimpl ICalendar.Deserialize, for: BitString do
 
   def from_ics(ics) do
     ics
-    |> String.trim # Remove trailing whitespace
-    |> String.split("\n") # Split by line
-    |> Enum.map(&retrieve_kvs/1) # Convert each line into a key-value tuple
-    |> Enum.reduce(%Event{}, &build_event/2) # Convert the tuple into a map
+    |> String.trim
+    |> String.split("\n")
+    |> Enum.map(&retrieve_kvs/1)
+    |> Enum.reduce(%Event{}, &build_event/2)
   end
 
   def retrieve_kvs(line) do
