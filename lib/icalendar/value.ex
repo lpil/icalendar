@@ -18,7 +18,10 @@ defimpl Value, for: DateTime do
 
   def to_ics(%DateTime{} = timestamp) do
     format_string = "{YYYY}{0M}{0D}T{h24}{m}{s}Z"
-    {:ok, result} = timestamp |> Timex.format(format_string)
+    {:ok, result} =
+      timestamp
+      |> Timex.Timezone.convert("UTC")
+      |> Timex.format(format_string)
     result
   end
 end

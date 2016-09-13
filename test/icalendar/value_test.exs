@@ -8,6 +8,11 @@ defmodule ICalendar.ValueTest do
     assert result == "20160104T004223Z"
   end
 
+  test "datetimes' timezones are all converted to UTC" do
+    time = Timex.to_datetime({{2016, 1, 1}, {3, 2, 1}}, "America/Chicago")
+    assert Value.to_ics(time) == "20160101T090201Z"
+  end
+
   test "value of a very different tupe" do
     result = Value.to_ics({:ok, "Hi there"})
     assert result == {:ok, "Hi there"}
