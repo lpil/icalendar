@@ -15,14 +15,14 @@ defmodule ICalendarTest do
     events = [
       %ICalendar.Event{
         summary: "Film with Amy and Adam",
-        dtstart: {{2015, 12, 24}, {8, 30, 00}},
-        dtend:   {{2015, 12, 24}, {8, 45, 00}},
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtend:   Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars.",
       },
       %ICalendar.Event{
         summary: "Morning meeting",
-        dtstart: {{2015, 12, 24}, {19, 00, 00}},
-        dtend:   {{2015, 12, 24}, {22, 30, 00}},
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {19, 00, 00}}),
+        dtend:   Timex.to_datetime({{2015, 12, 24}, {22, 30, 00}}),
         description: "A big long meeting with lots of details.",
       },
     ]
@@ -51,8 +51,8 @@ defmodule ICalendarTest do
     events = [
       %ICalendar.Event{
         summary: "Film with Amy and Adam",
-        dtstart: {{2015, 12, 24}, {8, 30, 00}},
-        dtend:   {{2015, 12, 24}, {8, 45, 00}},
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtend:   Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars, and have fun.",
         location: "123 Fun Street, Toronto ON, Canada"
       },

@@ -24,7 +24,7 @@ defmodule ICalendar.Mixfile do
   end
 
   def application do
-    [applications: []]
+    [applications: [:timex]]
   end
 
   defp deps do
@@ -38,6 +38,9 @@ defmodule ICalendar.Mixfile do
       {:earmark, ">= 0.0.0", only: [:dev, :test]},
       # Documentation generator
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
+
+      # For full timezone support
+      {:timex, "~> 3.0.0"}
     ]
   end
 end
