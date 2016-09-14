@@ -39,18 +39,18 @@ defmodule ICalendar.Util.Deserialize do
 
   It should be able to handle dates from the past:
 
-  iex> ICalendar.Util.Deserialize.to_date("19930407T153022Z")
-  {:ok, {{1993, 4, 7}, {15, 30, 22}}}
+      iex> ICalendar.Util.Deserialize.to_date("19930407T153022Z")
+      {:ok, {{1993, 4, 7}, {15, 30, 22}}}
 
   As well as the future:
 
-  iex>  ICalendar.Util.Deserialize.to_date("39930407T153022Z")
-  {:ok, {{3993, 4, 7}, {15, 30, 22}}}
+      iex> ICalendar.Util.Deserialize.to_date("39930407T153022Z")
+      {:ok, {{3993, 4, 7}, {15, 30, 22}}}
 
   And should return nil for incorrect dates:
 
-  iex> ICalendar.Util.Deserialize.to_date("1993/04/07")
-  {:error, "Timestamp is not in the correct format: 1993/04/07"}
+      iex> ICalendar.Util.Deserialize.to_date("1993/04/07")
+      {:error, "Timestamp is not in the correct format: 1993/04/07"}
 
   """
   def to_date(date_string) do
