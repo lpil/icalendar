@@ -20,6 +20,10 @@ defimpl Value, for: Tuple do
     end
   end
 
+  @doc """
+  This macro is used to establish whether a tuple is in the Erlang Timestamp
+  format (`{{year, month, day}, {hour, minute, second}}`).
+  """
   defmacro is_datetime_tuple(x) do
     quote do
       # Year
@@ -47,6 +51,9 @@ defimpl Value, for: Tuple do
     end
   end
 
+  @doc """
+  This function converts Erlang timestamp tuples into DateTimes.
+  """
   def to_ics(timestamp) when is_datetime_tuple(timestamp) do
     timestamp
     |> Timex.to_datetime
@@ -60,6 +67,10 @@ end
 defimpl Value, for: DateTime do
   use Timex
 
+  @doc """
+  This function converts DateTimes to UTC timezone and then into Strings in the
+  iCal format
+  """
   def to_ics(%DateTime{} = timestamp) do
     format_string = "{YYYY}{0M}{0D}T{h24}{m}{s}Z"
 
