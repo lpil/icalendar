@@ -14,8 +14,8 @@ defmodule ICalendar.DeserializeTest do
     """
     event = ICalendar.from_ics(ics)
     assert event == %Event{
-      dtstart: {{2015, 12, 24}, {8, 30, 00}},
-      dtend: {{2015, 12, 24}, {8, 45, 00}},
+      dtstart: ~N[2015-12-24 08:30:00],
+      dtend: ~N[2015-12-24 08:45:00],
       summary: "Going fishing",
       description: "Escape from the world. Stare at some water."
     }
