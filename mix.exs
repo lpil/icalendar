@@ -1,7 +1,7 @@
 defmodule ICalendar.Mixfile do
   use Mix.Project
 
-  @version "0.1.2"
+  @version "0.2.0"
 
   def project do
     [
@@ -13,7 +13,7 @@ defmodule ICalendar.Mixfile do
       deps: deps,
 
       name: "ICalendar",
-      source_url: "https://github.com/lpil/dogma",
+      source_url: "https://github.com/lpil/icalendar",
       description: "An ICalendar file generator",
       package: [
         maintainers: ["Louis Pilfold"],
