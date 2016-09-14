@@ -24,9 +24,13 @@ defmodule ICalendar.Util.Deserialize do
     %{acc | description: description}
   end
   def parse_attr({"DTSTART", dtstart}, acc) do
-    %{acc | dtstart: to_date(dtstart)}
+    {:ok, timestamp} = to_date(dtstart)
+    %{acc | dtstart: timestamp}
   end
-  def parse_attr({"DTEND", dtend}, acc), do: %{acc | dtend: to_date(dtend)}
+  def parse_attr({"DTEND", dtend}, acc) do
+    {:ok, timestamp} = to_date(dtend)
+    %{acc | dtend: timestamp}
+  end
   def parse_attr({"SUMMARY", summary}, acc), do: %{acc | summary: summary}
   def parse_attr(_, acc), do: acc
 
@@ -36,12 +40,12 @@ defmodule ICalendar.Util.Deserialize do
   It should be able to handle dates from the past:
 
   iex> ICalendar.Util.Deserialize.to_date("19930407T153022Z")
-  {{1993, 4, 7}, {15, 30, 22}}
+  {:ok, {{1993, 4, 7}, {15, 30, 22}}}
 
   As well as the future:
 
   iex>  ICalendar.Util.Deserialize.to_date("39930407T153022Z")
-  {{3993, 4, 7}, {15, 30, 22}}
+  {:ok, {{3993, 4, 7}, {15, 30, 22}}}
 
   And should return nil for incorrect dates:
 
@@ -66,7 +70,7 @@ defmodule ICalendar.Util.Deserialize do
         time = {
           String.to_integer(hour), String.to_integer(minute),
           String.to_integer(second)}
-        {date, time}
+        {:ok, {date, time}}
 
       _ -> {:error, "Timestamp is not in the correct format: #{date_string}"}
     end
