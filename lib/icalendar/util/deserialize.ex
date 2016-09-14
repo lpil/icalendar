@@ -16,7 +16,7 @@ defmodule ICalendar.Util.Deserialize do
   {"LOREM", "ipsum"}
   """
   def retrieve_kvs(line) do
-    [key, value] = String.split(line, ":")
+    [key, value] = String.split(line, ":", parts: 2, trim: true)
     {String.upcase(key), value}
   end
 
