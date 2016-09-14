@@ -34,6 +34,9 @@ defmodule ICalendar.Util.Deserialize do
   def parse_attr({"SUMMARY", summary}, acc) do
     %{acc | summary: desanitized(summary)}
   end
+  def parse_attr({"LOCATION", location}, acc) do
+    %{acc | location: desanitized(location)}
+  end
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
