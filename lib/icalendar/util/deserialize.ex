@@ -21,7 +21,7 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr({"DESCRIPTION", description}, acc) do
-    %{acc | description: description}
+    %{acc | description: desanitized(description)}
   end
   def parse_attr({"DTSTART", dtstart}, acc) do
     {:ok, timestamp} = to_date(dtstart)
@@ -31,7 +31,9 @@ defmodule ICalendar.Util.Deserialize do
     {:ok, timestamp} = to_date(dtend)
     %{acc | dtend: timestamp}
   end
-  def parse_attr({"SUMMARY", summary}, acc), do: %{acc | summary: summary}
+  def parse_attr({"SUMMARY", summary}, acc) do
+    %{acc | summary: desanitized(summary)}
+  end
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
@@ -55,5 +57,17 @@ defmodule ICalendar.Util.Deserialize do
   """
   def to_date(date_string) do
     Timex.parse(date_string, "{YYYY}{0M}{0D}T{h24}{m}{s}Z")
+
+  @doc ~S"""
+
+  This function should strip any sanitization that has been applied to content
+  within an iCal string.
+
+  iex> ICalendar.Util.Deserialize.desanitized(~s(lorem\\, ipsum))
+  "lorem, ipsum"
+  """
+  def desanitized(string) do
+    string
+    |> String.replace(~s(\\), "")
   end
 end
