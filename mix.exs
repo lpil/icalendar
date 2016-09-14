@@ -35,9 +35,9 @@ defmodule ICalendar.Mixfile do
       {:mix_test_watch, ">= 0.0.0", only: :dev},
 
       # Markdown processor
-      {:earmark, ">= 0.0.0", only: :dev},
+      {:earmark, ">= 0.0.0", only: [:dev, :test]},
       # Documentation generator
-      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
     ]
   end
 end
