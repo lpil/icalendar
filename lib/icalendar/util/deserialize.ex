@@ -44,22 +44,26 @@ defmodule ICalendar.Util.Deserialize do
 
   It should be able to handle dates from the past:
 
-      iex> ICalendar.Util.Deserialize.to_date("19930407T153022Z")
-      {:ok, ~N[1993-04-07 15:30:22]}
+      iex> {:ok, date} = ICalendar.Util.Deserialize.to_date("19930407T153022Z")
+      ...> Timex.to_erl(date)
+      {{1993, 4, 7}, {15, 30, 22}}
 
   As well as the future:
 
-      iex>  ICalendar.Util.Deserialize.to_date("39930407T153022Z")
-      {:ok, ~N[3993-04-07 15:30:22]}
+      iex> {:ok, date} = ICalendar.Util.Deserialize.to_date("39930407T153022Z")
+      ...> Timex.to_erl(date)
+      {{3993, 4, 7}, {15, 30, 22}}
 
   And should return nil for incorrect dates:
 
       iex> ICalendar.Util.Deserialize.to_date("1993/04/07")
       {:error, "Expected `1-2 digit month` at line 1, column 5."}
-
   """
   def to_date(date_string) do
-    Timex.parse(date_string, "{YYYY}{0M}{0D}T{h24}{m}{s}Z")
+    # Force UTC until we add native timezone support
+    date_string = date_string <> "UTC"
+    Timex.parse(date_string, "{YYYY}{0M}{0D}T{h24}{m}{s}Z{Zname}")
+  end
 
   @doc ~S"""
 

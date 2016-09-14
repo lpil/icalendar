@@ -20,8 +20,8 @@ defmodule ICalendar.Util.DeserializeTest do
 
     assert event == %Event{
       description: "Escape from the world. Stare at some water.",
-      dtstart: ~N[2015-12-24 08:30:00],
-      dtend: ~N[2015-12-24 08:45:00],
+      dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
+      dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
       location: nil,
       summary: "Going fishing"
     }
