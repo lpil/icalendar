@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/lpil/icalendar.svg?branch=master)](https://travis-ci.org/lpil/icalendar)
 
-A small library for generating ICalendar files.
+A small library for reading and writing ICalendar files.
 
 ## Usage
 
