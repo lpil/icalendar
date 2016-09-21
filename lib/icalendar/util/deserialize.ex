@@ -12,29 +12,61 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   @doc ~S"""
-  iex> ICalendar.Util.Deserialize.retrieve_kvs("lorem:ipsum")
-  {"LOREM", "ipsum"}
+  This function extracts the key and value parts from each line of a iCalendar
+  string.
+
+      iex> ICalendar.Util.Deserialize.retrieve_kvs("lorem:ipsum")
+      {"LOREM", %{params: %{}, value: "ipsum"}}
   """
   def retrieve_kvs(line) do
+    # Split Line up into key and value
     [key, value] = String.split(line, ":", parts: 2, trim: true)
-    {String.upcase(key), value}
+    [key, params] = retrieve_params(key)
+
+    {String.upcase(key), %{value: value, params: params}}
   end
 
-  def parse_attr({"DESCRIPTION", description}, acc) do
+  @doc ~S"""
+  This function extracts parameter data from a key in an iCalendar string.
+
+      iex> ICalendar.Util.Deserialize.retrieve_params(
+      ...>   "DTSTART;TZID=America/Chicago")
+      ["DTSTART", %{"TZID" => "America/Chicago"}]
+
+  It should be able to handle multiple parameters per key:
+
+      iex> ICalendar.Util.Deserialize.retrieve_params(
+      ...>   "KEY;LOREM=ipsum;DOLOR=sit")
+      ["KEY", %{"LOREM" => "ipsum", "DOLOR" => "sit"}]
+  """
+  def retrieve_params(key) do
+    [key | params] = String.split(key, ";", trim: true)
+
+    params =
+      params
+      |> Enum.reduce(%{}, fn(param, acc) ->
+        [key, val] = String.split(param, "=", parts: 2, trim: true)
+        Map.merge(acc, %{key => val})
+      end)
+
+    [key, params]
+  end
+
+  def parse_attr({"DESCRIPTION", %{value: description}}, acc) do
     %{acc | description: desanitized(description)}
   end
-  def parse_attr({"DTSTART", dtstart}, acc) do
-    {:ok, timestamp} = to_date(dtstart)
+  def parse_attr({"DTSTART", %{value: dtstart, params: params}}, acc) do
+    {:ok, timestamp} = to_date(dtstart, params)
     %{acc | dtstart: timestamp}
   end
-  def parse_attr({"DTEND", dtend}, acc) do
-    {:ok, timestamp} = to_date(dtend)
+  def parse_attr({"DTEND", %{value: dtend, params: params}}, acc) do
+    {:ok, timestamp} = to_date(dtend, params)
     %{acc | dtend: timestamp}
   end
-  def parse_attr({"SUMMARY", summary}, acc) do
+  def parse_attr({"SUMMARY", %{value: summary}}, acc) do
     %{acc | summary: desanitized(summary)}
   end
-  def parse_attr({"LOCATION", location}, acc) do
+  def parse_attr({"LOCATION", %{value: location}}, acc) do
     %{acc | location: desanitized(location)}
   end
   def parse_attr(_, acc), do: acc
@@ -58,11 +90,31 @@ defmodule ICalendar.Util.Deserialize do
 
       iex> ICalendar.Util.Deserialize.to_date("1993/04/07")
       {:error, "Expected `1-2 digit month` at line 1, column 5."}
+
+  It should handle timezones from  the Olson Database:
+
+      iex> {:ok, date} = ICalendar.Util.Deserialize.to_date("19980119T020000",
+      ...> %{"TZID" => "America/Chicago"})
+      ...> [Timex.to_erl(date), date.time_zone]
+      [{{1998, 1, 19}, {2, 0, 0}}, "America/Chicago"]
   """
-  def to_date(date_string) do
+  def to_date(date_string, %{"TZID" => timezone}) do
     # Force UTC until we add native timezone support
-    date_string = date_string <> "UTC"
-    Timex.parse(date_string, "{YYYY}{0M}{0D}T{h24}{m}{s}Z{Zname}")
+    date_string =
+      case String.last(date_string) do
+        "Z" -> date_string
+        _   -> date_string <> "Z"
+      end
+
+    Timex.parse(date_string <> timezone, "{YYYY}{0M}{0D}T{h24}{m}{s}Z{Zname}")
+  end
+
+  def to_date(date_string, %{}) do
+    to_date(date_string, %{"TZID" => "Etc/UTC"})
+  end
+
+  def to_date(date_string) do
+    to_date(date_string, %{"TZID" => "Etc/UTC"})
   end
 
   @doc ~S"""
@@ -70,8 +122,8 @@ defmodule ICalendar.Util.Deserialize do
   This function should strip any sanitization that has been applied to content
   within an iCal string.
 
-  iex> ICalendar.Util.Deserialize.desanitized(~s(lorem\\, ipsum))
-  "lorem, ipsum"
+      iex> ICalendar.Util.Deserialize.desanitized(~s(lorem\\, ipsum))
+      "lorem, ipsum"
   """
   def desanitized(string) do
     string
