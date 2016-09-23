@@ -31,9 +31,24 @@ defmodule ICalendar.EventTest do
     } |> ICalendar.to_ics
     assert ics == """
     BEGIN:VEVENT
-    DTEND:20151224T084500Z
-    DTSTART:20151224T083000Z
+    DTEND;TZID=Etc/UTC:20151224T084500
+    DTSTART;TZID=Etc/UTC:20151224T083000
     END:VEVENT
     """
+  end
+
+  test "ICalendar.to_ics/1 with datetime with timezone" do
+    ics = %Event{
+      dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}, "America/Chicago"),
+      dtend:   Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}, "America/Chicago"),
+    } |> ICalendar.to_ics
+
+    assert ics == """
+    BEGIN:VEVENT
+    DTEND;TZID=America/Chicago:20151224T084500
+    DTSTART;TZID=America/Chicago:20151224T083000
+    END:VEVENT
+    """
+
   end
 end

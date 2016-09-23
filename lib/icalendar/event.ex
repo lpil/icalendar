@@ -32,7 +32,7 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
 
   defp to_kv({key, raw_value}) do
     name  = key |> to_string |> String.upcase
-    value = Value.to_ics( raw_value )
-    KV.build( name, value )
+    value = Value.to_ics(raw_value)
+    KV.build(name, value, raw_value)
   end
 end

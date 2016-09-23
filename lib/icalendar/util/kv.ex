@@ -4,25 +4,39 @@ defmodule ICalendar.Util.KV do
   """
 
   @doc ~S"""
-    iex> ICalendar.Util.KV.build("foo", "bar")
+  Convert a key and value to an iCal line:
+
+    iex> ICalendar.Util.KV.build("foo", "bar", "bar")
     "foo:bar\n"
 
-    iex> ICalendar.Util.KV.build("foo", nil)
+  Don't add empty values:
+
+    iex> ICalendar.Util.KV.build("foo", nil, nil)
     ""
+
+  DateTime values will add timezones:
+
+    iex> date = Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}, "America/Chicago")
+    ...> ICalendar.Util.KV.build("foo", "20151224T083000", date)
+    "foo;TZID=America/Chicago:20151224T083000\n"
   """
-  def build(_, nil) do
+  def build(_, nil, _) do
     ""
   end
 
-  def build("LOCATION" = key, value ) do
+  def build("LOCATION" = key, value, _raw) do
     build_sanitized(key, value)
   end
 
-  def build("DESCRIPTION" = key, value ) do
+  def build("DESCRIPTION" = key, value, _raw) do
     build_sanitized(key, value)
   end
 
-  def build(key, value) do
+  def build(key, value, date = %DateTime{}) do
+    "#{key};TZID=#{date.time_zone}:#{value}\n"
+  end
+
+  def build(key, value, _raw) do
     "#{key}:#{value}\n"
   end
 
@@ -30,7 +44,7 @@ defmodule ICalendar.Util.KV do
     "#{key}:#{sanitize(value)}\n"
   end
 
-  defp sanitize(string) do
+  defp sanitize(string) when is_bitstring(string) do
     string
     |> String.replace(~r{([\,;])}, "//\\g{1}")
     |> String.replace("//", "\\")

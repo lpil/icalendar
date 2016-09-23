@@ -72,11 +72,10 @@ defimpl Value, for: DateTime do
   iCal format
   """
   def to_ics(%DateTime{} = timestamp) do
-    format_string = "{YYYY}{0M}{0D}T{h24}{m}{s}Z"
+    format_string = "{YYYY}{0M}{0D}T{h24}{m}{s}"
 
     {:ok, result} =
       timestamp
-      |> Timex.Timezone.convert("UTC")
       |> Timex.format(format_string)
     result
   end
