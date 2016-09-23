@@ -16,12 +16,12 @@ defmodule ICalendar.Util.Deserialize do
   {"LOREM", "ipsum"}
   """
   def retrieve_kvs(line) do
-    [key, value] = String.split(line, ":")
+    [key, value] = String.split(line, ":", parts: 2, trim: true)
     {String.upcase(key), value}
   end
 
   def parse_attr({"DESCRIPTION", description}, acc) do
-    %{acc | description: description}
+    %{acc | description: desanitized(description)}
   end
   def parse_attr({"DTSTART", dtstart}, acc) do
     {:ok, timestamp} = to_date(dtstart)
@@ -31,7 +31,12 @@ defmodule ICalendar.Util.Deserialize do
     {:ok, timestamp} = to_date(dtend)
     %{acc | dtend: timestamp}
   end
-  def parse_attr({"SUMMARY", summary}, acc), do: %{acc | summary: summary}
+  def parse_attr({"SUMMARY", summary}, acc) do
+    %{acc | summary: desanitized(summary)}
+  end
+  def parse_attr({"LOCATION", location}, acc) do
+    %{acc | location: desanitized(location)}
+  end
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
@@ -39,40 +44,37 @@ defmodule ICalendar.Util.Deserialize do
 
   It should be able to handle dates from the past:
 
-      iex> ICalendar.Util.Deserialize.to_date("19930407T153022Z")
-      {:ok, {{1993, 4, 7}, {15, 30, 22}}}
+      iex> {:ok, date} = ICalendar.Util.Deserialize.to_date("19930407T153022Z")
+      ...> Timex.to_erl(date)
+      {{1993, 4, 7}, {15, 30, 22}}
 
   As well as the future:
 
-      iex> ICalendar.Util.Deserialize.to_date("39930407T153022Z")
-      {:ok, {{3993, 4, 7}, {15, 30, 22}}}
+      iex> {:ok, date} = ICalendar.Util.Deserialize.to_date("39930407T153022Z")
+      ...> Timex.to_erl(date)
+      {{3993, 4, 7}, {15, 30, 22}}
 
   And should return nil for incorrect dates:
 
       iex> ICalendar.Util.Deserialize.to_date("1993/04/07")
-      {:error, "Timestamp is not in the correct format: 1993/04/07"}
-
+      {:error, "Expected `1-2 digit month` at line 1, column 5."}
   """
   def to_date(date_string) do
-    date_regex = ~S/(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})/
-    time_regex = ~S/(?<hour>\d{2})(?<minute>\d{2})(?<second>\d{2})/
-    {:ok, regex} = Regex.compile("#{date_regex}T#{time_regex}Z")
+    # Force UTC until we add native timezone support
+    date_string = date_string <> "UTC"
+    Timex.parse(date_string, "{YYYY}{0M}{0D}T{h24}{m}{s}Z{Zname}")
+  end
 
-    case Regex.named_captures(regex, date_string) do
-      %{
-        "year" => year, "month" => month, "day" => day,
-        "hour" => hour, "minute" => minute, "second" => second} ->
+  @doc ~S"""
 
-        date = {
-          String.to_integer(year), String.to_integer(month),
-          String.to_integer(day)}
+  This function should strip any sanitization that has been applied to content
+  within an iCal string.
 
-        time = {
-          String.to_integer(hour), String.to_integer(minute),
-          String.to_integer(second)}
-        {:ok, {date, time}}
-
-      _ -> {:error, "Timestamp is not in the correct format: #{date_string}"}
-    end
+  iex> ICalendar.Util.Deserialize.desanitized(~s(lorem\\, ipsum))
+  "lorem, ipsum"
+  """
+  def desanitized(string) do
+    string
+    |> String.replace(~s(\\), "")
   end
 end
