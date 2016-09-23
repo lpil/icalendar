@@ -16,7 +16,9 @@ defmodule ICalendar.Util.KV do
 
   DateTime values will add timezones:
 
-    iex> date = Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}, "America/Chicago")
+    iex> date =
+    ...>   {{2015, 12, 24}, {8, 30, 0}}
+    ...>   |> Timex.to_datetime("America/Chicago")
     ...> ICalendar.Util.KV.build("foo", "20151224T083000", date)
     "foo;TZID=America/Chicago:20151224T083000\n"
   """

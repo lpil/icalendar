@@ -38,10 +38,17 @@ defmodule ICalendar.EventTest do
   end
 
   test "ICalendar.to_ics/1 with datetime with timezone" do
-    ics = %Event{
-      dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}, "America/Chicago"),
-      dtend:   Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}, "America/Chicago"),
-    } |> ICalendar.to_ics
+    dtstart =
+      {{2015, 12, 24}, {8, 30, 00}}
+      |> Timex.to_datetime("America/Chicago")
+
+    dtend =
+      {{2015, 12, 24}, {8, 45, 00}}
+      |> Timex.to_datetime("America/Chicago")
+
+    ics =
+      %Event{dtstart: dtstart, dtend: dtend}
+      |> ICalendar.to_ics
 
     assert ics == """
     BEGIN:VEVENT
