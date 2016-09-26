@@ -4,6 +4,7 @@ defmodule ICalendar.Util.Deserialize do
   """
 
   alias ICalendar.Event
+  alias ICalendar.Property
 
   def build_event(lines) when is_list(lines) do
     lines
@@ -16,14 +17,14 @@ defmodule ICalendar.Util.Deserialize do
   string.
 
       iex> ICalendar.Util.Deserialize.retrieve_kvs("lorem:ipsum")
-      {"LOREM", %{params: %{}, value: "ipsum"}}
+      %ICalendar.Property{key: "LOREM", params: %{}, value: "ipsum"}
   """
   def retrieve_kvs(line) do
     # Split Line up into key and value
     [key, value] = String.split(line, ":", parts: 2, trim: true)
     [key, params] = retrieve_params(key)
 
-    {String.upcase(key), %{value: value, params: params}}
+    %Property{key: String.upcase(key), value: value, params: params}
   end
 
   @doc ~S"""
@@ -52,21 +53,26 @@ defmodule ICalendar.Util.Deserialize do
     [key, params]
   end
 
-  def parse_attr({"DESCRIPTION", %{value: description}}, acc) do
+  def parse_attr(%Property{key: "DESCRIPTION", value: description},
+                 acc) do
     %{acc | description: desanitized(description)}
   end
-  def parse_attr({"DTSTART", %{value: dtstart, params: params}}, acc) do
+  def parse_attr(%Property{key: "DTSTART", value: dtstart, params: params},
+                 acc) do
     {:ok, timestamp} = to_date(dtstart, params)
     %{acc | dtstart: timestamp}
   end
-  def parse_attr({"DTEND", %{value: dtend, params: params}}, acc) do
+  def parse_attr(%Property{key: "DTEND", value: dtend, params: params},
+                 acc) do
     {:ok, timestamp} = to_date(dtend, params)
     %{acc | dtend: timestamp}
   end
-  def parse_attr({"SUMMARY", %{value: summary}}, acc) do
+  def parse_attr(%Property{key: "SUMMARY", value: summary},
+                 acc) do
     %{acc | summary: desanitized(summary)}
   end
-  def parse_attr({"LOCATION", %{value: location}}, acc) do
+  def parse_attr(%Property{key: "LOCATION", value: location},
+                 acc) do
     %{acc | location: desanitized(location)}
   end
   def parse_attr(_, acc), do: acc
@@ -99,7 +105,6 @@ defmodule ICalendar.Util.Deserialize do
       [{{1998, 1, 19}, {2, 0, 0}}, "America/Chicago"]
   """
   def to_date(date_string, %{"TZID" => timezone}) do
-    # Force UTC until we add native timezone support
     date_string =
       case String.last(date_string) do
         "Z" -> date_string
