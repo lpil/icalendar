@@ -12,7 +12,6 @@ end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do
   alias ICalendar.Util.KV
-  alias ICalendar.Value
 
   def to_ics(event) do
     contents = to_kvs(event)
@@ -30,9 +29,8 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
     |> Enum.join
   end
 
-  defp to_kv({key, raw_value}) do
+  defp to_kv({key, value}) do
     name  = key |> to_string |> String.upcase
-    value = Value.to_ics(raw_value)
-    KV.build(name, value, raw_value)
+    KV.build(name, value)
   end
 end
