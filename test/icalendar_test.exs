@@ -27,20 +27,21 @@ defmodule ICalendarTest do
       },
     ]
     ics = %ICalendar{ events: events } |> ICalendar.to_ics
+
     assert ics == """
     BEGIN:VCALENDAR
     CALSCALE:GREGORIAN
     VERSION:2.0
     BEGIN:VEVENT
     DESCRIPTION:Let's go see Star Wars.
-    DTEND:20151224T084500Z
-    DTSTART:20151224T083000Z
+    DTEND;TZID=Etc/UTC:20151224T084500
+    DTSTART;TZID=Etc/UTC:20151224T083000
     SUMMARY:Film with Amy and Adam
     END:VEVENT
     BEGIN:VEVENT
     DESCRIPTION:A big long meeting with lots of details.
-    DTEND:20151224T223000Z
-    DTSTART:20151224T190000Z
+    DTEND;TZID=Etc/UTC:20151224T223000
+    DTSTART;TZID=Etc/UTC:20151224T190000
     SUMMARY:Morning meeting
     END:VEVENT
     END:VCALENDAR
@@ -64,8 +65,8 @@ defmodule ICalendarTest do
     VERSION:2.0
     BEGIN:VEVENT
     DESCRIPTION:Let's go see Star Wars\\, and have fun.
-    DTEND:20151224T084500Z
-    DTSTART:20151224T083000Z
+    DTEND;TZID=Etc/UTC:20151224T084500
+    DTSTART;TZID=Etc/UTC:20151224T083000
     LOCATION:123 Fun Street\\, Toronto ON\\, Canada
     SUMMARY:Film with Amy and Adam
     END:VEVENT
@@ -82,7 +83,7 @@ defmodule ICalendarTest do
         dtend:   Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars, and have fun.",
         location: "123 Fun Street, Toronto ON, Canada"
-},
+      }
     ]
     new_event =
       %ICalendar{ events: events }
