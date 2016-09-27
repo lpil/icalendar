@@ -53,26 +53,36 @@ defmodule ICalendar.Util.Deserialize do
     [key, params]
   end
 
-  def parse_attr(%Property{key: "DESCRIPTION", value: description},
-                 acc) do
+  def parse_attr(
+    %Property{key: "DESCRIPTION", value: description},
+    acc
+  ) do
     %{acc | description: desanitized(description)}
   end
-  def parse_attr(%Property{key: "DTSTART", value: dtstart, params: params},
-                 acc) do
+  def parse_attr(
+    %Property{key: "DTSTART", value: dtstart, params: params},
+    acc
+  ) do
     {:ok, timestamp} = to_date(dtstart, params)
     %{acc | dtstart: timestamp}
   end
-  def parse_attr(%Property{key: "DTEND", value: dtend, params: params},
-                 acc) do
+  def parse_attr(
+    %Property{key: "DTEND", value: dtend, params: params},
+    acc
+  ) do
     {:ok, timestamp} = to_date(dtend, params)
     %{acc | dtend: timestamp}
   end
-  def parse_attr(%Property{key: "SUMMARY", value: summary},
-                 acc) do
+  def parse_attr(
+    %Property{key: "SUMMARY", value: summary},
+    acc
+  ) do
     %{acc | summary: desanitized(summary)}
   end
-  def parse_attr(%Property{key: "LOCATION", value: location},
-                 acc) do
+  def parse_attr(
+    %Property{key: "LOCATION", value: location},
+    acc
+  ) do
     %{acc | location: desanitized(location)}
   end
   def parse_attr(_, acc), do: acc
