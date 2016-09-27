@@ -35,7 +35,6 @@ defmodule ICalendar.DeserializeTest do
       assert event.dtstart.time_zone == "America/Chicago"
       assert event.dtend.time_zone == "America/Chicago"
     end
-
   end
 
 end

@@ -5,6 +5,7 @@ defmodule ICalendar.Util.Deserialize do
 
   alias ICalendar.Event
   alias ICalendar.Property
+  alias ICalendar.RRULE
 
   def build_event(lines) when is_list(lines) do
     lines
@@ -84,6 +85,12 @@ defmodule ICalendar.Util.Deserialize do
     acc
   ) do
     %{acc | location: desanitized(location)}
+  end
+  def parse_attr(
+    %Property{key: "RRULE", value: rrule},
+    acc
+  ) do
+    %{acc | rrule: RRULE.deserialize(rrule)}
   end
   def parse_attr(_, acc), do: acc
 

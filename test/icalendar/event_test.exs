@@ -56,6 +56,6 @@ defmodule ICalendar.EventTest do
     DTSTART;TZID=America/Chicago:20151224T083000
     END:VEVENT
     """
-
   end
+
 end
