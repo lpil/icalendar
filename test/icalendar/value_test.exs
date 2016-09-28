@@ -35,4 +35,35 @@ defmodule ICalendar.ValueTest do
     result = Value.to_ics ~S"Hi\nthere"
     assert result == ~S"Hi\\nthere"
   end
+
+  test "value of an RRULE" do
+    rrule = %ICalendar.RRULE{
+      frequency: :yearly,
+      until: Timex.to_datetime({{2022, 10, 12}, {15, 30, 0}}, "Etc/UTC"),
+      by_second: [1, 3, 5],
+      by_minute: [1, 3, 5],
+      by_hour: [12, 13, 14],
+      by_month_day: [2, 4, 6],
+      by_year_day: [50, 75, 150],
+      by_week_number: [25, 35, 45],
+      by_set_pos: -5,
+      by_day: [:monday, :wednesday, :friday],
+      by_month: [:april, :june],
+      week_start: :monday
+    }
+    result = Value.to_ics(rrule)
+    assert result == [
+      "BYDAY=MO,WE,FR",
+      "BYHOUR=12,13,14",
+      "BYMINUTE=1,3,5",
+      "BYMONTH=4,6",
+      "BYMONTHDAY=2,4,6",
+      "BYSECOND=1,3,5",
+      "BYWEEKNO=25,35,45",
+      "BYYEARDAY=50,75,150",
+      "FREQ=YEARLY",
+      "UNTIL=20221012T153000",
+      "WKST=MO"
+    ] |> Enum.join(";")
+  end
 end
