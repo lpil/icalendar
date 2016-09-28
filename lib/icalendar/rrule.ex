@@ -55,18 +55,30 @@ defmodule ICalendar.RRULE do
             count: nil,
             interval: nil,
             by_day: [],
-            by_second: [],      # integer >= 0 && <= 59
-            by_minute: [],      # integer >= 0 && <= 59
-            by_hour: [],        # integer >= 0 && <= 23
-            by_week_day: [],    # %{ordinal: 0, day: nil}
-            by_month_day: [],   # integer > 0 && < 32
-            by_year_day:  [],   # integer > 0 && < 367
-            by_week_number: [], # integer > 0 && < 32
-            by_month: [],       # integer > 0 && < 13
-            by_set_pos: [],     # integer > 0 && < 367
-            week_start: nil,    # @days
+            by_second: [],
+            by_minute: [],
+            by_hour: [],
+            by_month_day: [],
+            by_year_day:  [],
+            by_week_number: [],
+            by_month: [],
+            by_set_pos: [],
+            week_start: nil,
             x_name: nil,
             errors: []
+
+  @doc ~S"""
+  This function is used to determine whether an RRULE struct has errors or not
+
+      iex> ICalendar.RRULE.valid(%ICalendar.RRULE{errors: []})
+      true
+
+      iex> ICalendar.RRULE.valid(%ICalendar.RRULE{errors: ["error"]})
+      false
+  """
+  def valid(%ICalendar.RRULE{errors: errors}) when is_list(errors) do
+    Enum.count(errors) == 0
+  end
 
   @doc ~S"""
   This function is used to deserialize an RRULE string into a struct
@@ -92,6 +104,20 @@ defmodule ICalendar.RRULE do
     end)
     |> Enum.map(&validate_param/1)
     |> Enum.reduce(%ICalendar.RRULE{}, &parse_attr/2)
+    |> validate
+  end
+
+  def validate(rule = %ICalendar.RRULE{}) do
+    # If UNTIL and COUNT are both set, then it's an error
+    case rule.until != nil && rule.count != nil do
+      true ->
+        errors = [
+          "You can only set UNTIL or COUNT: not both at the same time"
+          | rule.errors]
+
+        Map.put(rule, :errors, errors)
+      false -> rule
+    end
   end
 
   def parse_attr(%{key: key, value: value}, accumulator) do
@@ -243,7 +269,8 @@ defmodule ICalendar.RRULE do
 
     validation =
       value
-      |> Enum.map(&((&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366 && &1 != 0)))
+      |> Enum.map(&(
+        (&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366 && &1 != 0)))
 
     case false in validation do
       false -> %{prop | value: value}
@@ -279,7 +306,8 @@ defmodule ICalendar.RRULE do
 
     validation =
       value
-      |> Enum.map(&((&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366 && &1 != 0)))
+      |> Enum.map(&(
+        (&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366 && &1 != 0)))
 
     case false in validation do
       false -> %{prop | value: value}

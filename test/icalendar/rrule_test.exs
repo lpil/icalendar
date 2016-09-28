@@ -198,6 +198,14 @@ defmodule ICalendar.RRULETest do
          %RRULE{
            errors: [
              "'BYMONTH' must be between 1 and 12 if it is set"
+           ]}},
+
+        {"COUNT=13;UNTIL=22221224T084500Z",
+         %RRULE{
+           count: 13,
+           until: Timex.to_datetime({{2222, 12, 24}, {8, 45, 0}}, "Etc/UTC"),
+           errors: [
+             "You can only set UNTIL or COUNT: not both at the same time"
            ]}}
       ]
       |> Enum.each(fn ({check, result}) ->
