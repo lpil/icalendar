@@ -81,7 +81,10 @@ defmodule ICalendar.RRULE do
     accumulator
   ) do
 
-    {:ok, date} = Deserialize.to_date(until, Map.merge(params, %{"TZID" => "Etc/UTC"}))
+    {:ok, date} = Deserialize.to_date(
+      until,
+      Map.merge(params, %{"TZID" => "Etc/UTC"})
+    )
     %{ accumulator | until: date }
   end
   def parse_attr(%{key: key, value: value}, accumulator) do
