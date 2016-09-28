@@ -31,6 +31,25 @@ defmodule ICalendar.RRULE do
            :august, :september, :october,
            :november, :december]
 
+
+  @string_to_atom_keys %{
+    "FREQ"       => :frequency,
+    "COUNT"      => :count,
+    "UNTIL"      => :until,
+    "INTERVAL"   => :interval,
+    "BYSECOND"   => :by_second,
+    "BYMINUTE"   => :by_minute,
+    "BYHOUR"     => :by_hour,
+    "BYMONTHDAY" => :by_month_day,
+    "BYYEARDAY"  => :by_year_day,
+    "BYWEEKNO"   => :by_week_number,
+    "BYSETPOS"   => :by_set_pos,
+    "BYDAY"      => :by_day,
+    "BYMONTH"    => :by_month,
+    "WKST"       => :week_start,
+    "X-NAME"     => :x_name
+  }
+
   defstruct frequency: nil,
             until: nil,
             count: nil,
@@ -46,8 +65,8 @@ defmodule ICalendar.RRULE do
             by_month: [],       # integer > 0 && < 13
             by_set_pos: [],     # integer > 0 && < 367
             week_start: nil,    # @days
-            # TODO: Improve naming, find out what this does
-            x_name: nil
+            x_name: nil,
+            errors: []
 
   @doc ~S"""
   This function is used to deserialize an RRULE string into a struct
@@ -71,132 +90,20 @@ defmodule ICalendar.RRULE do
 
       %Property{key: String.upcase(key), value: value, params: params}
     end)
+    |> Enum.map(&validate/1)
     |> Enum.reduce(%ICalendar.RRULE{}, &parse_attr/2)
   end
 
-  def parse_attr(%Property{key: "FREQ", value: frequency}, accumulator) do
-    frequency = String.upcase(frequency)
-    frequency = Map.fetch!(@frequencies, frequency)
-    %{ accumulator | frequency: frequency }
-  end
-  def parse_attr(%Property{key: "COUNT", value: count}, accumulator) do
-    %{ accumulator | count: String.to_integer(count) }
-  end
-  def parse_attr(%Property{key: "INTERVAL", value: interval}, accumulator) do
-    %{ accumulator | interval: String.to_integer(interval) }
-  end
-  def parse_attr(%Property{key: "BYSECOND", value: seconds}, accumulator) do
-    seconds =
-      seconds
-      |> parse_value_as_list(&(String.to_integer(&1)))
-
-    %{ accumulator | by_second: seconds }
-  end
-  def parse_attr(%Property{key: "BYMINUTE", value: minutes}, accumulator) do
-    minutes =
-      minutes
-      |> parse_value_as_list(&(String.to_integer(&1)))
-
-    %{ accumulator | by_minute: minutes }
-  end
-  def parse_attr(%Property{key: "BYHOUR", value: hours}, accumulator) do
-    hours =
-      hours
-      |> parse_value_as_list(&(String.to_integer(&1)))
-
-    %{ accumulator | by_hour: hours }
-  end
-  def parse_attr(
-    %Property{key: "BYMONTHDAY", value: month_days},
-    accumulator
-  ) do
-    month_days =
-      month_days
-      |> parse_value_as_list(&(String.to_integer(&1)))
-
-    %{ accumulator | by_month_day: month_days }
-  end
-  def parse_attr(
-    %Property{key: "BYYEARDAY", value: year_days},
-    accumulator
-  ) do
-    year_days =
-      year_days
-      |> parse_value_as_list(&(String.to_integer(&1)))
-
-    %{ accumulator | by_year_day: year_days }
-  end
-  def parse_attr(
-    %Property{key: "BYWEEKNO", value: week_numbers},
-    accumulator
-  ) do
-    week_numbers =
-      week_numbers
-      |> parse_value_as_list(&(String.to_integer(&1)))
-
-    %{ accumulator | by_week_number: week_numbers }
-  end
-  def parse_attr(%Property{key: "BYSETPOS", value: set_pos}, accumulator) do
-    set_pos =
-      set_pos
-      |> parse_value_as_list(&(String.to_integer(&1)))
-
-    %{ accumulator | by_set_pos: set_pos }
-  end
-  def parse_attr(
-    %Property{key: "UNTIL", params: params, value: until},
-    accumulator
-  ) do
-
-    {:ok, date} = Deserialize.to_date(
-      until,
-      Map.merge(params, %{"TZID" => "Etc/UTC"})
-    )
-    %{ accumulator | until: date }
-  end
-  def parse_attr(
-    %Property{key: "BYDAY", value: days},
-    accumulator
-  ) do
-    days =
-      days
-      |> parse_value_as_list(
-        &(Map.fetch!(@days, String.upcase(&1)))
-      )
-
-    %{ accumulator | by_day: days }
-  end
-  def parse_attr(
-    %Property{key: "BYMONTH", value: months},
-    accumulator
-  ) do
-    months =
-      months
-      |> parse_value_as_list(
-        &(Enum.at(@months, (String.to_integer(&1) - 1)))
-      )
-
-    %{ accumulator | by_month: months }
-  end
-  def parse_attr(
-    %Property{key: "WKST", value: week_start},
-    accumulator
-  ) do
-    week_start =
-      Map.fetch!(@days, String.upcase(week_start))
-    %{ accumulator | week_start: week_start}
-  end
-  def parse_attr(
-    %Property{key: "X-NAME", value: value},
-    accumulator
-  ) do
-    %{ accumulator | x_name: value}
-  end
   def parse_attr(%{key: key, value: value}, accumulator) do
+
     key =
-      key
-      |> String.downcase
-      |> String.to_atom
+      case Map.fetch(@string_to_atom_keys, key) do
+        {:ok, atom} -> atom
+        {:error} ->
+            key
+            |> String.downcase
+            |> String.to_atom
+      end
 
     Map.put(accumulator, key, value)
   end
@@ -226,12 +133,215 @@ defmodule ICalendar.RRULE do
     |> Enum.map(operation)
   end
 
-  def validate(rrule) do
-    # UNTIL or COUNT may appear but not both
-    # UNTIL is a date if set
-    # COUNT is >= 1 if set
-
-    rrule
+  def validate(prop = %Property{key: "FREQ", value: value}) do
+    case Map.fetch(@frequencies, value) do
+      {:ok, freq}  -> %{prop | value: freq}
+      :error -> {:error, prop, "'#{value}' is not an accepted frequency"}
+    end
   end
+  def validate(prop = %Property{key: "UNTIL", value: value}) do
+    out = Deserialize.to_date(value, %{"TZID" => "Etc/UTC"})
+    case out do
+      {:ok, date} -> %{prop | value: date}
+      _           -> {:error, prop, "'#{value}' is not a valid date"}
+    end
+  end
+  def validate(prop = %Property{key: "COUNT", value: value}) do
+    value = String.to_integer(value)
+    case value >= 1 do
+      true -> %{prop | value: value}
+      false -> {:error, prop, "'COUNT' must be >= 1 if it is set"}
+    end
+  end
+  def validate(prop = %Property{key: "INTERVAL", value: value}) do
+    value = String.to_integer(value)
+    case value >= 1 do
+      true -> %{prop | value: value}
+      false -> {:error, prop, "'INTERVAL' must be >= 1 if it is set"}
+    end
+  end
+  def validate(prop = %Property{key: "BYSECOND", value: value}) do
+    value =
+      value
+      |> parse_value_as_list(&(String.to_integer(&1)))
 
+    validation =
+      value
+      |> Enum.map(&(&1 >= 0 && &1 <= 59))
+
+    case false in validation do
+      false -> %{prop | value: value}
+      true -> {
+        :error,
+        prop,
+        "'BYSECOND' must be between 0 and 59 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "BYMINUTE", value: value}) do
+    value =
+      value
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    validation =
+      value
+      |> Enum.map(&(&1 >= 0 && &1 <= 59))
+
+    case false in validation do
+      false -> %{prop | value: value}
+      true -> {
+        :error,
+        prop,
+        "'BYMINUTE' must be between 0 and 59 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "BYHOUR", value: value}) do
+    value =
+      value
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    validation =
+      value
+      |> Enum.map(&(&1 >= 0 && &1 <= 23))
+
+    case false in validation do
+      false -> %{prop | value: value}
+      true -> {
+        :error,
+        prop,
+        "'HOUR' must be between 0 and 23 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "BYMONTHDAY", value: value}) do
+    value =
+      value
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    validation =
+      value
+      |> Enum.map(&((&1 >= 1 && &1 <= 31) || (&1 <= 1 && &1 >= -31)))
+
+    case false in validation do
+      false -> %{prop | value: value}
+      true -> {
+        :error,
+        prop,
+        "'BYMONTHDAY' must be between 1 and 31 or -1 and -31 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "BYYEARDAY", value: value}) do
+    value =
+      value
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    validation =
+      value
+      |> Enum.map(&((&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366)))
+
+    case false in validation do
+      false -> %{prop | value: value}
+      true -> {
+        :error,
+        prop,
+        "'BYYEARDAY' must be between 1 and 366 or -1 and -366 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "BYWEEKNO", value: value}) do
+    value =
+      value
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    validation =
+      value
+      |> Enum.map(&((&1 >= 1 && &1 <= 53) || (&1 <= 1 && &1 >= -53)))
+
+    case false in validation do
+      false -> %{prop | value: value}
+      true -> {
+        :error,
+        prop,
+        "'BYWEEKNO' must be between 1 and 53 or -1 and -53 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "BYSETPOS", value: value}) do
+    value =
+      value
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    validation =
+      value
+      |> Enum.map(&((&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366)))
+
+    case false in validation do
+      false -> %{prop | value: value}
+      true -> {
+        :error,
+        prop,
+        "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "BYDAY", value: value}) do
+    # Upcase the values
+    value =
+      value
+      |> parse_value_as_list(&(String.upcase(&1)))
+
+    # Check to see if they're in the list of days
+    validation =
+      value
+      |> Enum.map(&(&1 in Map.keys(@days)))
+
+    # If they all are, then fetch the value for all of them and add them to the
+    # property.
+    case false in validation do
+      false -> %{prop | value: Enum.map(value, &(Map.fetch!(@days, &1)))}
+      true -> {
+        :error,
+        prop,
+        "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "WKST", value: value}) do
+    value = String.upcase(value)
+
+    case Map.fetch(@days, value) do
+      {:ok, day} -> %{prop | value: day}
+      _ -> {
+        :error,
+        prop,
+        "'WKST' must have a valid day string if set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "BYMONTH", value: value}) do
+    value =
+      value
+      |> parse_value_as_list(
+        &(String.to_integer(&1))
+      )
+
+    validation =
+      value
+      |> Enum.map(&(&1 >= 1 && &1 <= 12))
+
+    case false in validation do
+      false -> %{prop | value: Enum.map(value, &(Enum.at(@months, &1 - 1)))}
+      true -> {
+        :error,
+        prop,
+        "'BYMONTH' must be between 1 and 12 if it is set"
+      }
+    end
+  end
+  def validate(prop = %Property{key: "X-NAME"}), do: prop
+  def validate(prop = %Property{key: key}) do
+    {:error, prop, "'#{key}' is not a recognised key"}
+  end
 end

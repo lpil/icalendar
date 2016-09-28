@@ -8,7 +8,6 @@ defmodule ICalendar.RRULETest do
     test "String, Atom & Number properties" do
       [
         {"FREQ=DAILY",         %RRULE{frequency: :daily}},
-        {"FREQ=yearly",        %RRULE{frequency: :yearly}},
         {"COUNT=5",            %RRULE{count: 5}},
         {"INTERVAL=5",         %RRULE{interval: 5}},
         {"BYSECOND=5",         %RRULE{by_second: [5]}},
