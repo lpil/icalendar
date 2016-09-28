@@ -74,10 +74,15 @@ defimpl Value, for: ICalendar.RRULE do
     end
   end
   defp serialize(:by_month, value) when is_list(value) do
-    # TODO: Return index here!
     case Enum.count(value) do
       0 -> nil
-      _ -> Enum.join(value, ",")
+      _ ->
+        value
+        |> Enum.map(fn(val) ->
+          # Retrieve the index of the months array then add one
+          Enum.find_index(ICalendar.RRULE.months, &(&1 == val)) + 1
+        end)
+        |> Enum.join(",")
     end
   end
   defp serialize(:by_month_day, value) when is_list(value) do

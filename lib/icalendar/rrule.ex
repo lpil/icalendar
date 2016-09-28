@@ -68,6 +68,11 @@ defmodule ICalendar.RRULE do
             errors: []
 
   @doc ~S"""
+  Produces a list of months in the year
+  """
+  def months, do: @months
+
+  @doc ~S"""
   Produces a list of RRULE iCal String keys and their %ICalendar.RRULE{}
   counterparts.
   """
