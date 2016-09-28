@@ -122,6 +122,72 @@ defmodule ICalendar.RRULETest do
              "'BYMONTHDAY' must be between 1 and 31 or -1 and -31 if it is set"
            ]}},
 
+        {"BYYEARDAY=-367",
+         %RRULE{
+           errors: [
+             "'BYYEARDAY' must be between 1 and 366 or -1 and -366 if it is set"
+           ]}},
+
+        {"BYYEARDAY=0",
+         %RRULE{
+           errors: [
+             "'BYYEARDAY' must be between 1 and 366 or -1 and -366 if it is set"
+           ]}},
+
+        {"BYYEARDAY=367",
+         %RRULE{
+           errors: [
+             "'BYYEARDAY' must be between 1 and 366 or -1 and -366 if it is set"
+           ]}},
+
+        {"BYWEEKNO=-54",
+         %RRULE{
+           errors: [
+             "'BYWEEKNO' must be between 1 and 53 or -1 and -53 if it is set"
+           ]}},
+
+        {"BYWEEKNO=0",
+         %RRULE{
+           errors: [
+             "'BYWEEKNO' must be between 1 and 53 or -1 and -53 if it is set"
+           ]}},
+
+        {"BYWEEKNO=54",
+         %RRULE{
+           errors: [
+             "'BYWEEKNO' must be between 1 and 53 or -1 and -53 if it is set"
+           ]}},
+
+        {"BYSETPOS=-367",
+         %RRULE{
+           errors: [
+             "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
+           ]}},
+
+        {"BYSETPOS=0",
+         %RRULE{
+           errors: [
+             "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
+           ]}},
+
+        {"BYSETPOS=367",
+         %RRULE{
+           errors: [
+             "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
+           ]}},
+
+        {"BYDAY=blergh",
+         %RRULE{
+           errors: [
+             "'BYDAY' must have a valid day string if set"
+           ]}},
+
+        {"WKST=blergh",
+         %RRULE{
+           errors: [
+             "'WKST' must have a valid day string if set"
+           ]}},
+
         {"BYMONTH=0",
          %RRULE{
            errors: [
@@ -132,8 +198,7 @@ defmodule ICalendar.RRULETest do
          %RRULE{
            errors: [
              "'BYMONTH' must be between 1 and 12 if it is set"
-           ]}},
-
+           ]}}
       ]
       |> Enum.each(fn ({check, result}) ->
         assert RRULE.deserialize(check) == result
