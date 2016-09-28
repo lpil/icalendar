@@ -79,6 +79,64 @@ defmodule ICalendar.RRULE do
   def parse_attr(%Property{key: "INTERVAL", value: interval}, accumulator) do
     %{ accumulator | interval: String.to_integer(interval) }
   end
+  def parse_attr(%Property{key: "BYSECOND", value: seconds}, accumulator) do
+    seconds =
+      seconds
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    %{ accumulator | by_second: seconds }
+  end
+  def parse_attr(%Property{key: "BYMINUTE", value: minutes}, accumulator) do
+    minutes =
+      minutes
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    %{ accumulator | by_minute: minutes }
+  end
+  def parse_attr(%Property{key: "BYHOUR", value: hours}, accumulator) do
+    hours =
+      hours
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    %{ accumulator | by_hour: hours }
+  end
+  def parse_attr(
+    %Property{key: "BYMONTHDAY", value: month_days},
+    accumulator
+  ) do
+    month_days =
+      month_days
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    %{ accumulator | by_month_day: month_days }
+  end
+  def parse_attr(
+    %Property{key: "BYYEARDAY", value: year_days},
+    accumulator
+  ) do
+    year_days =
+      year_days
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    %{ accumulator | by_year_day: year_days }
+  end
+  def parse_attr(
+    %Property{key: "BYWEEKNO", value: week_numbers},
+    accumulator
+  ) do
+    week_numbers =
+      week_numbers
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    %{ accumulator | by_week_number: week_numbers }
+  end
+  def parse_attr(%Property{key: "BYSETPOS", value: set_pos}, accumulator) do
+    set_pos =
+      set_pos
+      |> parse_value_as_list(&(String.to_integer(&1)))
+
+    %{ accumulator | by_set_pos: set_pos }
+  end
   def parse_attr(
     %Property{key: "UNTIL", params: params, value: until},
     accumulator
