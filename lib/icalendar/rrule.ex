@@ -243,7 +243,7 @@ defmodule ICalendar.RRULE do
 
     validation =
       value
-      |> Enum.map(&((&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366)))
+      |> Enum.map(&((&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366 && &1 != 0)))
 
     case false in validation do
       false -> %{prop | value: value}
@@ -261,7 +261,7 @@ defmodule ICalendar.RRULE do
 
     validation =
       value
-      |> Enum.map(&((&1 >= 1 && &1 <= 53) || (&1 <= 1 && &1 >= -53)))
+      |> Enum.map(&((&1 >= 1 && &1 <= 53) || (&1 <= 1 && &1 >= -53 && &1 != 0)))
 
     case false in validation do
       false -> %{prop | value: value}
@@ -279,7 +279,7 @@ defmodule ICalendar.RRULE do
 
     validation =
       value
-      |> Enum.map(&((&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366)))
+      |> Enum.map(&((&1 >= 1 && &1 <= 366) || (&1 <= 1 && &1 >= -366 && &1 != 0)))
 
     case false in validation do
       false -> %{prop | value: value}
@@ -308,7 +308,7 @@ defmodule ICalendar.RRULE do
       true -> {
         :error,
         prop,
-        "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
+        "'BYDAY' must have a valid day string if set"
       }
     end
   end
