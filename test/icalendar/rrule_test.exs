@@ -15,12 +15,18 @@ defmodule ICalendar.RRULETest do
         {"BYSECOND=5,10,15",   %RRULE{by_second: [5, 10, 15]}},
         {"BYMINUTE=5",         %RRULE{by_minute: [5]}},
         {"BYHOUR=5",           %RRULE{by_hour: [5]}},
+        {"BYMONTH=5",          %RRULE{by_month: [:may]}},
+        {"BYMONTH=1,3,5",      %RRULE{by_month: [:january, :march, :may]}},
         {"BYMONTHDAY=5",       %RRULE{by_month_day: [5]}},
         {"BYMONTHDAY=-5",      %RRULE{by_month_day: [-5]}},
         {"BYYEARDAY=5",        %RRULE{by_year_day: [5]}},
         {"BYWEEKNO=5",         %RRULE{by_week_number: [5]}},
         {"BYSETPOS=5",         %RRULE{by_set_pos: [5]}},
-        {"FREQ=DAILY;COUNT=5", %RRULE{count: 5, frequency: :daily}}
+        {"FREQ=DAILY;COUNT=5", %RRULE{count: 5, frequency: :daily}},
+        {"BYDAY=MO",           %RRULE{by_day: [:monday]}},
+        {"BYDAY=MO,TU,SA",     %RRULE{by_day: [:monday, :tuesday, :saturday]}},
+        {"WKST=MO",            %RRULE{week_start: :monday}},
+        {"x-name=lorem",       %RRULE{x_name: "lorem"}}
       ]
       |> Enum.each(fn ({check, result}) ->
         assert RRULE.deserialize(check) == result

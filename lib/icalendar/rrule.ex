@@ -26,10 +26,16 @@ defmodule ICalendar.RRULE do
     "SA" => :saturday
   }
 
+  @months [:january, :february, :march,
+           :april, :may, :june, :july,
+           :august, :september, :october,
+           :november, :december]
+
   defstruct frequency: nil,
             until: nil,
             count: nil,
             interval: nil,
+            by_day: [],
             by_second: [],      # integer >= 0 && <= 59
             by_minute: [],      # integer >= 0 && <= 59
             by_hour: [],        # integer >= 0 && <= 23
@@ -147,6 +153,44 @@ defmodule ICalendar.RRULE do
       Map.merge(params, %{"TZID" => "Etc/UTC"})
     )
     %{ accumulator | until: date }
+  end
+  def parse_attr(
+    %Property{key: "BYDAY", value: days},
+    accumulator
+  ) do
+    days =
+      days
+      |> parse_value_as_list(
+        &(Map.fetch!(@days, String.upcase(&1)))
+      )
+
+    %{ accumulator | by_day: days }
+  end
+  def parse_attr(
+    %Property{key: "BYMONTH", value: months},
+    accumulator
+  ) do
+    months =
+      months
+      |> parse_value_as_list(
+        &(Enum.at(@months, (String.to_integer(&1) - 1)))
+      )
+
+    %{ accumulator | by_month: months }
+  end
+  def parse_attr(
+    %Property{key: "WKST", value: week_start},
+    accumulator
+  ) do
+    week_start =
+      Map.fetch!(@days, String.upcase(week_start))
+    %{ accumulator | week_start: week_start}
+  end
+  def parse_attr(
+    %Property{key: "X-NAME", value: value},
+    accumulator
+  ) do
+    %{ accumulator | x_name: value}
   end
   def parse_attr(%{key: key, value: value}, accumulator) do
     key =
