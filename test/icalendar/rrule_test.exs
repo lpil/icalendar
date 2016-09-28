@@ -41,6 +41,105 @@ defmodule ICalendar.RRULETest do
       assert Timex.to_erl(rrule.until) == {{1997, 7, 14}, {13, 30, 0}}
     end
 
+    test "Validation" do
+      [
+        {"not_a_key=lorem",
+         %RRULE{
+           errors: [
+             "'NOT_A_KEY' is not a recognised property"
+             ]}},
+
+        {"not_a_key=lorem;also_not_a_key=ipsum",
+         %RRULE{
+           errors: [
+              "'ALSO_NOT_A_KEY' is not a recognised property",
+              "'NOT_A_KEY' is not a recognised property"
+           ]}},
+
+        {"INTERVAL=0",
+         %RRULE{
+           errors: [
+             "'INTERVAL' must be >= 1 if it is set"
+           ]}},
+
+        {"COUNT=0",
+         %RRULE{
+           errors: [
+             "'COUNT' must be >= 1 if it is set"
+           ]}},
+
+        {"BYSECOND=-1",
+         %RRULE{
+           errors: [
+             "'BYSECOND' must be between 0 and 59 if it is set"
+           ]}},
+
+        {"BYSECOND=60",
+         %RRULE{
+           errors: [
+             "'BYSECOND' must be between 0 and 59 if it is set"
+           ]}},
+
+        {"BYMINUTE=-1",
+         %RRULE{
+           errors: [
+             "'BYMINUTE' must be between 0 and 59 if it is set"
+           ]}},
+
+        {"BYMINUTE=60",
+         %RRULE{
+           errors: [
+             "'BYMINUTE' must be between 0 and 59 if it is set"
+           ]}},
+
+        {"BYHOUR=-1",
+         %RRULE{
+           errors: [
+             "'BYHOUR' must be between 0 and 23 if it is set"
+           ]}},
+
+        {"BYHOUR=24",
+         %RRULE{
+           errors: [
+             "'BYHOUR' must be between 0 and 23 if it is set"
+           ]}},
+
+        {"BYMONTHDAY=-32",
+         %RRULE{
+           errors: [
+             "'BYMONTHDAY' must be between 1 and 31 or -1 and -31 if it is set"
+           ]}},
+
+        {"BYMONTHDAY=0",
+         %RRULE{
+           errors: [
+             "'BYMONTHDAY' must be between 1 and 31 or -1 and -31 if it is set"
+           ]}},
+
+        {"BYMONTHDAY=32",
+         %RRULE{
+           errors: [
+             "'BYMONTHDAY' must be between 1 and 31 or -1 and -31 if it is set"
+           ]}},
+
+        {"BYMONTH=0",
+         %RRULE{
+           errors: [
+             "'BYMONTH' must be between 1 and 12 if it is set"
+           ]}},
+
+        {"BYMONTH=13",
+         %RRULE{
+           errors: [
+             "'BYMONTH' must be between 1 and 12 if it is set"
+           ]}},
+
+      ]
+      |> Enum.each(fn ({check, result}) ->
+        assert RRULE.deserialize(check) == result
+      end)
+    end
+
   end
 
 end
