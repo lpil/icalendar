@@ -80,7 +80,7 @@ defmodule ICalendarTest do
         rrule: %ICalendar.RRULE{
           frequency: :yearly,
           until: Timex.to_datetime({{2022, 10, 12}, {15, 30, 0}}, "Etc/UTC"),
-          by_day: [1, 3, 5],
+          by_day: [:monday, :wednesday, :friday],
           week_start: :monday,
           by_month: [:april]
         }
@@ -96,7 +96,7 @@ defmodule ICalendarTest do
     CALSCALE:GREGORIAN
     VERSION:2.0
     BEGIN:VEVENT
-    RRULE:BYDAY=1,3,5;BYMONTH=4;FREQ=YEARLY;UNTIL=20221012T153000;WKST=MO
+    RRULE:BYDAY=MO,WE,FR;BYMONTH=4;FREQ=YEARLY;UNTIL=20221012T153000;WKST=MO
     END:VEVENT
     END:VCALENDAR
     """

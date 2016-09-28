@@ -68,9 +68,18 @@ defimpl Value, for: ICalendar.RRULE do
     end
   end
   defp serialize(:by_day, value) when is_list(value) do
+    days = ICalendar.RRULE.days(:inverted)
     case Enum.count(value) do
       0 -> nil
-      _ -> Enum.join(value, ",")
+      _ ->
+        value
+        |> Enum.map(fn(val) ->
+          case Map.fetch(days, val) do
+            {:ok, day} -> day
+            :error     -> nil
+          end
+        end)
+        |> Enum.join(",") 
     end
   end
   defp serialize(:by_month, value) when is_list(value) do
