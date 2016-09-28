@@ -99,6 +99,31 @@ defmodule ICalendar.RRULE do
     Map.put(accumulator, key, value)
   end
 
+  @doc """
+  This function is used to split up values into a list format. An operation is
+  optionally passed to it to format each result in a certain way.
+
+      iex> RRULE.parse_value_as_list("a,b,c")
+      ["a", "b", "c"]
+
+      iex> RRULE.parse_value_as_list("1,2,3", &(String.to_integer(&1)))
+      [1,2,3]
+  """
+  def parse_value_as_list(value), do: parse_value_as_list(value, &(&1))
+  def parse_value_as_list(value, operation) when is_function(operation) do
+    vals =
+      value
+      |> String.split(",")
+
+    vals
+    |> is_bitstring
+    |> case do
+        true -> [vals]
+        false -> vals
+      end
+    |> Enum.map(operation)
+  end
+
   def validate(rrule) do
     # UNTIL or COUNT may appear but not both
     # UNTIL is a date if set
