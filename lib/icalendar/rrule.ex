@@ -90,7 +90,7 @@ defmodule ICalendar.RRULE do
 
       %Property{key: String.upcase(key), value: value, params: params}
     end)
-    |> Enum.map(&validate/1)
+    |> Enum.map(&validate_param/1)
     |> Enum.reduce(%ICalendar.RRULE{}, &parse_attr/2)
   end
 
@@ -133,34 +133,34 @@ defmodule ICalendar.RRULE do
     |> Enum.map(operation)
   end
 
-  def validate(prop = %Property{key: "FREQ", value: value}) do
+  def validate_param(prop = %Property{key: "FREQ", value: value}) do
     case Map.fetch(@frequencies, value) do
       {:ok, freq}  -> %{prop | value: freq}
       :error -> {:error, prop, "'#{value}' is not an accepted frequency"}
     end
   end
-  def validate(prop = %Property{key: "UNTIL", value: value}) do
+  def validate_param(prop = %Property{key: "UNTIL", value: value}) do
     out = Deserialize.to_date(value, %{"TZID" => "Etc/UTC"})
     case out do
       {:ok, date} -> %{prop | value: date}
       _           -> {:error, prop, "'#{value}' is not a valid date"}
     end
   end
-  def validate(prop = %Property{key: "COUNT", value: value}) do
+  def validate_param(prop = %Property{key: "COUNT", value: value}) do
     value = String.to_integer(value)
     case value >= 1 do
       true -> %{prop | value: value}
       false -> {:error, prop, "'COUNT' must be >= 1 if it is set"}
     end
   end
-  def validate(prop = %Property{key: "INTERVAL", value: value}) do
+  def validate_param(prop = %Property{key: "INTERVAL", value: value}) do
     value = String.to_integer(value)
     case value >= 1 do
       true -> %{prop | value: value}
       false -> {:error, prop, "'INTERVAL' must be >= 1 if it is set"}
     end
   end
-  def validate(prop = %Property{key: "BYSECOND", value: value}) do
+  def validate_param(prop = %Property{key: "BYSECOND", value: value}) do
     value =
       value
       |> parse_value_as_list(&(String.to_integer(&1)))
@@ -178,7 +178,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "BYMINUTE", value: value}) do
+  def validate_param(prop = %Property{key: "BYMINUTE", value: value}) do
     value =
       value
       |> parse_value_as_list(&(String.to_integer(&1)))
@@ -196,7 +196,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "BYHOUR", value: value}) do
+  def validate_param(prop = %Property{key: "BYHOUR", value: value}) do
     value =
       value
       |> parse_value_as_list(&(String.to_integer(&1)))
@@ -214,7 +214,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "BYMONTHDAY", value: value}) do
+  def validate_param(prop = %Property{key: "BYMONTHDAY", value: value}) do
     value =
       value
       |> parse_value_as_list(&(String.to_integer(&1)))
@@ -232,7 +232,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "BYYEARDAY", value: value}) do
+  def validate_param(prop = %Property{key: "BYYEARDAY", value: value}) do
     value =
       value
       |> parse_value_as_list(&(String.to_integer(&1)))
@@ -250,7 +250,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "BYWEEKNO", value: value}) do
+  def validate_param(prop = %Property{key: "BYWEEKNO", value: value}) do
     value =
       value
       |> parse_value_as_list(&(String.to_integer(&1)))
@@ -268,7 +268,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "BYSETPOS", value: value}) do
+  def validate_param(prop = %Property{key: "BYSETPOS", value: value}) do
     value =
       value
       |> parse_value_as_list(&(String.to_integer(&1)))
@@ -286,7 +286,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "BYDAY", value: value}) do
+  def validate_param(prop = %Property{key: "BYDAY", value: value}) do
     # Upcase the values
     value =
       value
@@ -308,7 +308,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "WKST", value: value}) do
+  def validate_param(prop = %Property{key: "WKST", value: value}) do
     value = String.upcase(value)
 
     case Map.fetch(@days, value) do
@@ -320,7 +320,7 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "BYMONTH", value: value}) do
+  def validate_param(prop = %Property{key: "BYMONTH", value: value}) do
     value =
       value
       |> parse_value_as_list(
@@ -340,8 +340,8 @@ defmodule ICalendar.RRULE do
       }
     end
   end
-  def validate(prop = %Property{key: "X-NAME"}), do: prop
-  def validate(prop = %Property{key: key}) do
+  def validate_param(prop = %Property{key: "X-NAME"}), do: prop
+  def validate_param(prop = %Property{key: key}) do
     {:error, prop, "'#{key}' is not a recognised key"}
   end
 end
