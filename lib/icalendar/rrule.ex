@@ -76,6 +76,9 @@ defmodule ICalendar.RRULE do
   def parse_attr(%Property{key: "COUNT", value: count}, accumulator) do
     %{ accumulator | count: String.to_integer(count) }
   end
+  def parse_attr(%Property{key: "INTERVAL", value: interval}, accumulator) do
+    %{ accumulator | interval: String.to_integer(interval) }
+  end
   def parse_attr(
     %Property{key: "UNTIL", params: params, value: until},
     accumulator

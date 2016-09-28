@@ -37,6 +37,10 @@ defmodule ICalendar.RRULETest do
       assert Timex.to_erl(rrule.until) == {{1997, 7, 14}, {13, 30, 0}}
     end
 
+    test "interval" do
+      assert RRULE.deserialize("INTERVAL=1") == %RRULE{interval: 1}
+    end
+
   end
 
 end
