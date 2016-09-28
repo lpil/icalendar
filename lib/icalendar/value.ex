@@ -79,7 +79,7 @@ defimpl Value, for: ICalendar.RRULE do
             :error     -> nil
           end
         end)
-        |> Enum.join(",") 
+        |> Enum.join(",")
     end
   end
   defp serialize(:by_month, value) when is_list(value) do
