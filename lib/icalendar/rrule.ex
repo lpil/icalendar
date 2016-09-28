@@ -107,6 +107,10 @@ defmodule ICalendar.RRULE do
 
     Map.put(accumulator, key, value)
   end
+  def parse_attr({:error, %Property{}, err_msg}, accumulator) do
+    {:ok, errors} = Map.fetch(accumulator, :errors)
+    Map.put(accumulator, :errors, [ err_msg | errors ])
+  end
 
   @doc """
   This function is used to split up values into a list format. An operation is
