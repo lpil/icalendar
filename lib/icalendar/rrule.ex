@@ -54,18 +54,54 @@ defmodule ICalendar.RRULE do
             until: nil,
             count: nil,
             interval: nil,
-            by_day: [],
             by_second: [],
             by_minute: [],
             by_hour: [],
+            by_day: [],
+            by_month: [],
             by_month_day: [],
             by_year_day:  [],
             by_week_number: [],
-            by_month: [],
             by_set_pos: [],
             week_start: nil,
             x_name: nil,
             errors: []
+
+  @doc ~S"""
+  Produces a list of RRULE iCal String keys and their %ICalendar.RRULE{}
+  counterparts.
+  """
+  def string_to_atom_keys, do: @string_to_atom_keys
+  def string_to_atom_keys(:inverted) do
+      @string_to_atom_keys
+      |> Enum.reduce(%{}, fn({key, value}, acc) ->
+        Map.put(acc, value, key)
+      end)
+  end
+
+  @doc ~S"""
+  Produces a list of valid RRULE frequencies and their %ICalendar.RRULE{}
+  counterparts.
+  """
+  def frequencies, do: @frequencies
+  def frequencies(:inverted) do
+    @frequencies
+    |> Enum.reduce(%{}, fn({key, value}, acc) ->
+      Map.put(acc, value, key)
+    end)
+  end
+
+  @doc ~S"""
+  Produces a list of valid RRULE days and their %ICalendar.RRULE{}
+  counterparts.
+  """
+  def days, do: @days
+  def days(:inverted) do
+    @days
+    |> Enum.reduce(%{}, fn({key, value}, acc) ->
+      Map.put(acc, value, key)
+    end)
+  end
 
   @doc ~S"""
   This function is used to determine whether an RRULE struct has errors or not
