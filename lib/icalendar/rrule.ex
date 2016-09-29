@@ -73,40 +73,46 @@ defmodule ICalendar.RRULE do
   def months, do: @months
 
   @doc ~S"""
+  Produce inverse of @string_to_atom_keys at compile time
+  """
+  defmacro _atom_to_string_keys do
+    quote do: Deserialize.invert_map(@string_to_atom_keys)
+  end
+
+  @doc ~S"""
+  Produce inverse of @frequencies at compile time
+  """
+  defmacro _inverted_frequencies do
+    quote do: Deserialize.invert_map(@frequencies)
+  end
+
+  @doc ~S"""
+  Produce inverse of @days at compile time
+  """
+  defmacro _inverted_days do
+    quote do: Deserialize.invert_map(@days)
+  end
+
+  @doc ~S"""
   Produces a list of RRULE iCal String keys and their %ICalendar.RRULE{}
   counterparts.
   """
   def string_to_atom_keys, do: @string_to_atom_keys
-  def string_to_atom_keys(:inverted) do
-      @string_to_atom_keys
-      |> Enum.reduce(%{}, fn({key, value}, acc) ->
-        Map.put(acc, value, key)
-      end)
-  end
+  def string_to_atom_keys(:inverted), do: _atom_to_string_keys
 
   @doc ~S"""
   Produces a list of valid RRULE frequencies and their %ICalendar.RRULE{}
   counterparts.
   """
   def frequencies, do: @frequencies
-  def frequencies(:inverted) do
-    @frequencies
-    |> Enum.reduce(%{}, fn({key, value}, acc) ->
-      Map.put(acc, value, key)
-    end)
-  end
+  def frequencies(:inverted), do: _inverted_frequencies
 
   @doc ~S"""
   Produces a list of valid RRULE days and their %ICalendar.RRULE{}
   counterparts.
   """
   def days, do: @days
-  def days(:inverted) do
-    @days
-    |> Enum.reduce(%{}, fn({key, value}, acc) ->
-      Map.put(acc, value, key)
-    end)
-  end
+  def days(:inverted), do: _inverted_days
 
   @doc ~S"""
   This function is used to determine whether an RRULE struct has errors or not

@@ -11,12 +11,10 @@ defimpl Value, for: ICalendar.RRULE do
   This function converts RRULE structs into an RRULE string
   """
   def to_ics(rrule = %ICalendar.RRULE{}) do
-    keys = ICalendar.RRULE.string_to_atom_keys(:inverted)
-
     rrule
     |> Map.from_struct
     |> Map.keys
-    |> Enum.map(&(Util.serialize(rrule, keys, &1)))
+    |> Enum.map(&(Util.serialize(rrule, &1)))
     |> Enum.reject(&(&1 == nil))
     |> Enum.join(";")
   end

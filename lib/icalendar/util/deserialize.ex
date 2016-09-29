@@ -7,6 +7,14 @@ defmodule ICalendar.Util.Deserialize do
   alias ICalendar.Property
   alias ICalendar.RRULE
 
+  def invert_map(map = %{}) do
+    map
+    |> Enum.reduce(%{}, fn({key, value}, acc) ->
+      Map.put(acc, value, key)
+    end)
+  end
+
+
   def build_event(lines) when is_list(lines) do
     lines
     |> Enum.map(&retrieve_kvs/1)

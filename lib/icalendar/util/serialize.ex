@@ -8,9 +8,8 @@ defmodule ICalendar.Util.RRULE do
   into RRULE iCalendar strings.
 
       iex> rrule = %ICalendar.RRULE{frequency: :daily}
-      ...> keys  = ICalendar.RRULE.string_to_atom_keys(:inverted)
       ...> key   = :frequency
-      ...> ICalendar.Util.RRULE.serialize(rrule, keys, key)
+      ...> ICalendar.Util.RRULE.serialize(rrule, key)
       "FREQ=DAILY"
 
   It can handle multiple values in a list format:
@@ -18,13 +17,13 @@ defmodule ICalendar.Util.RRULE do
       iex> rrule = %ICalendar.RRULE{
       ...>   by_day: [:monday, :tuesday]
       ...> }
-      ...> keys  = ICalendar.RRULE.string_to_atom_keys(:inverted)
       ...> key   = :by_day
-      ...> ICalendar.Util.RRULE.serialize(rrule, keys, key)
+      ...> ICalendar.Util.RRULE.serialize(rrule, key)
       "BYDAY=MO,TU"
 
   """
-  def serialize(rrule, keys, key) do
+  def serialize(rrule = %ICalendar.RRULE{}, key) do
+    keys = ICalendar.RRULE.string_to_atom_keys(:inverted)
     case Map.fetch(rrule, key) do
       {:ok, value} ->
         serialized_key   = serialize_key(key, keys)
