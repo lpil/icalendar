@@ -149,14 +149,14 @@ defmodule ICalendar.RRULE do
 
   def validate(rule = %ICalendar.RRULE{}) do
     # If UNTIL and COUNT are both set, then it's an error
-    case rule.until != nil && rule.count != nil do
-      true ->
-        errors = [
-          "You can only set UNTIL or COUNT: not both at the same time"
-          | rule.errors]
+    if rule.util && rule.count do
+      errors = [
+        "You can only set UNTIL or COUNT: not both at the same time"
+        | rule.errors]
 
-        Map.put(rule, :errors, errors)
-      false -> rule
+      Map.put(rule, :errors, errors)
+    else
+      rule
     end
   end
 
