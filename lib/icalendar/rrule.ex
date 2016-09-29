@@ -117,9 +117,8 @@ defmodule ICalendar.RRULE do
       iex> ICalendar.RRULE.valid(%ICalendar.RRULE{errors: ["error"]})
       false
   """
-  def valid(%ICalendar.RRULE{errors: errors}) when is_list(errors) do
-    Enum.count(errors) == 0
-  end
+  def valid(%ICalendar.RRULE{errors: []}), do: true
+  def valid(%ICalendar.RRULE{errors: err}) when is_list(err), do: false
 
   @doc ~S"""
   This function is used to deserialize an RRULE string into a struct
