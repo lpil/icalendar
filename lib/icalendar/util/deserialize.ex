@@ -48,6 +48,7 @@ defmodule ICalendar.Util.Deserialize do
       iex> ICalendar.Util.Deserialize.retrieve_params(
       ...>   "KEY;LOREM=ipsum;DOLOR=sit")
       ["KEY", %{"LOREM" => "ipsum", "DOLOR" => "sit"}]
+
   """
   def retrieve_params(key) do
     [key | params] = String.split(key, ";", trim: true)
@@ -72,15 +73,19 @@ defmodule ICalendar.Util.Deserialize do
     %Property{key: "DTSTART", value: dtstart, params: params},
     acc
   ) do
-    {:ok, timestamp} = to_date(dtstart, params)
-    %{acc | dtstart: timestamp}
+    case to_date(dtstart, params) do
+      {:ok, timestamp} -> %{acc | dtstart: timestamp}
+      {:error, term}   -> %{acc | errors: [term | acc.errors]}
+    end
   end
   def parse_attr(
     %Property{key: "DTEND", value: dtend, params: params},
     acc
   ) do
-    {:ok, timestamp} = to_date(dtend, params)
-    %{acc | dtend: timestamp}
+    case to_date(dtend, params) do
+      {:ok, timestamp} -> %{acc | dtend: timestamp}
+      {:error, term}   -> %{acc | errors: [term | acc.errors]}
+    end
   end
   def parse_attr(
     %Property{key: "SUMMARY", value: summary},
@@ -98,7 +103,10 @@ defmodule ICalendar.Util.Deserialize do
     %Property{key: "RRULE", value: rrule},
     acc
   ) do
-    %{acc | rrule: RRULE.deserialize(rrule)}
+    case RRULE.deserialize(rrule) do
+      {:ok, rrule}   -> %{acc | rrule: rrule}
+      {:error, term} -> %{acc | errors: [term | acc.errors]}
+    end
   end
   def parse_attr(_, acc), do: acc
 

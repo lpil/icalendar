@@ -133,10 +133,17 @@ defmodule ICalendar.RRULE do
 
       iex> "FREQ=DAILY;COUNT=10"
       ...> |> ICalendar.RRULE.deserialize
-      %ICalendar.RRULE{
-        :frequency => :daily,
-        :count     => 10
-      }
+      {:ok,
+        %ICalendar.RRULE{
+          :frequency => :daily,
+          :count     => 10
+        }}
+
+  Sending a bad RRULE produces an error:
+
+  iex> "COUNT=1;UNTIL=20151224T083000"
+  ...> |> ICalendar.RRULE.deserialize
+  {:error, ["You can only set UNTIL or COUNT: not both at the same time"]}
 
   """
   def deserialize(rrule) when is_bitstring(rrule) do
@@ -151,6 +158,15 @@ defmodule ICalendar.RRULE do
     |> Enum.map(&validate_param/1)
     |> Enum.reduce(%ICalendar.RRULE{}, &parse_attr/2)
     |> validate
+    |> respond
+  end
+
+  def respond(rule = %ICalendar.RRULE{}) do
+    if valid(rule) do
+      {:ok, rule}
+    else
+      {:error, rule.errors}
+    end
   end
 
   def validate(rule = %ICalendar.RRULE{}) do

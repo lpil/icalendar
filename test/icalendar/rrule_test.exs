@@ -28,12 +28,12 @@ defmodule ICalendar.RRULETest do
         {"x-name=lorem",       %RRULE{x_name: "lorem"}}
       ]
       |> Enum.each(fn ({check, result}) ->
-        assert RRULE.deserialize(check) == result
+        assert RRULE.deserialize(check) == {:ok, result}
       end)
     end
 
     test "Complex Properties" do
-      rrule =
+      {:ok, rrule} =
         "UNTIL=19970714T133000"
         |> RRULE.deserialize
 
@@ -44,167 +44,138 @@ defmodule ICalendar.RRULETest do
     test "Validation" do
       [
         {"not_a_key=lorem",
-         %RRULE{
-           errors: [
+         {:error, [
              "'NOT_A_KEY' is not a recognised property"
-             ]}},
-
-        {"not_a_key=lorem;also_not_a_key=ipsum",
-         %RRULE{
-           errors: [
-              "'ALSO_NOT_A_KEY' is not a recognised property",
-              "'NOT_A_KEY' is not a recognised property"
            ]}},
 
+        {"not_a_key=lorem;also_not_a_key=ipsum",
+           {:error, [
+              "'ALSO_NOT_A_KEY' is not a recognised property",
+              "'NOT_A_KEY' is not a recognised property"
+             ]}},
+
         {"INTERVAL=0",
-         %RRULE{
-           errors: [
+         {:error, [
              "'INTERVAL' must be >= 1 if it is set"
            ]}},
 
         {"COUNT=0",
-         %RRULE{
-           errors: [
+          {:error, [
              "'COUNT' must be >= 1 if it is set"
-           ]}},
+            ]}},
 
         {"BYSECOND=-1",
-         %RRULE{
-           errors: [
+          {:error, [
              "'BYSECOND' must be between 0 and 59 if it is set"
-           ]}},
+            ]}},
 
         {"BYSECOND=60",
-         %RRULE{
-           errors: [
+           {:error, [
              "'BYSECOND' must be between 0 and 59 if it is set"
-           ]}},
+             ]}},
 
         {"BYMINUTE=-1",
-         %RRULE{
-           errors: [
+           {:error, [
              "'BYMINUTE' must be between 0 and 59 if it is set"
-           ]}},
+             ]}},
 
         {"BYMINUTE=60",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYMINUTE' must be between 0 and 59 if it is set"
            ]}},
 
         {"BYHOUR=-1",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYHOUR' must be between 0 and 23 if it is set"
            ]}},
 
         {"BYHOUR=24",
-         %RRULE{
-           errors: [
-             "'BYHOUR' must be between 0 and 23 if it is set"
+         {:error, [
+            "'BYHOUR' must be between 0 and 23 if it is set"
            ]}},
 
         {"BYMONTHDAY=-32",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYMONTHDAY' must be between 1 and 31 or -1 and -31 if it is set"
            ]}},
 
         {"BYMONTHDAY=0",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYMONTHDAY' must be between 1 and 31 or -1 and -31 if it is set"
            ]}},
 
         {"BYMONTHDAY=32",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYMONTHDAY' must be between 1 and 31 or -1 and -31 if it is set"
            ]}},
 
         {"BYYEARDAY=-367",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYYEARDAY' must be between 1 and 366 or -1 and -366 if it is set"
            ]}},
 
         {"BYYEARDAY=0",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYYEARDAY' must be between 1 and 366 or -1 and -366 if it is set"
            ]}},
 
         {"BYYEARDAY=367",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYYEARDAY' must be between 1 and 366 or -1 and -366 if it is set"
            ]}},
 
         {"BYWEEKNO=-54",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYWEEKNO' must be between 1 and 53 or -1 and -53 if it is set"
            ]}},
 
         {"BYWEEKNO=0",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYWEEKNO' must be between 1 and 53 or -1 and -53 if it is set"
            ]}},
 
         {"BYWEEKNO=54",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYWEEKNO' must be between 1 and 53 or -1 and -53 if it is set"
            ]}},
 
         {"BYSETPOS=-367",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
            ]}},
 
         {"BYSETPOS=0",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
            ]}},
 
         {"BYSETPOS=367",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYSETPOS' must be between 1 and 366 or -1 and -366 if it is set"
            ]}},
 
         {"BYDAY=blergh",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYDAY' must have a valid day string if set"
            ]}},
 
         {"WKST=blergh",
-         %RRULE{
-           errors: [
+         {:error, [
              "'WKST' must have a valid day string if set"
            ]}},
 
         {"BYMONTH=0",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYMONTH' must be between 1 and 12 if it is set"
            ]}},
 
         {"BYMONTH=13",
-         %RRULE{
-           errors: [
+         {:error, [
              "'BYMONTH' must be between 1 and 12 if it is set"
            ]}},
 
         {"COUNT=13;UNTIL=22221224T084500Z",
-         %RRULE{
-           count: 13,
-           until: Timex.to_datetime({{2222, 12, 24}, {8, 45, 0}}, "Etc/UTC"),
-           errors: [
+         {:error, [
              "You can only set UNTIL or COUNT: not both at the same time"
            ]}}
       ]
