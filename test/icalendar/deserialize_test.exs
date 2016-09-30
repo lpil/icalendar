@@ -30,7 +30,8 @@ defmodule ICalendar.DeserializeTest do
       END:VEVENT
       """
       event = ICalendar.from_ics(bad_ics)
-      assert event == {:error, ["DTSTART: Expected `1-4 digit year` at line 1, column 1."]}
+      assert event ==
+        {:error, ["DTSTART: Expected `1-4 digit year` at line 1, column 1."]}
     end
 
     test "with Timezone" do

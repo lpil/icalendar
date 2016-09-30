@@ -141,9 +141,9 @@ defmodule ICalendar.RRULE do
 
   Sending a bad RRULE produces an error:
 
-  iex> "COUNT=1;UNTIL=20151224T083000"
-  ...> |> ICalendar.RRULE.deserialize
-  {:error, ["You can only set UNTIL or COUNT: not both at the same time"]}
+      iex> "COUNT=1;UNTIL=20151224T083000"
+      ...> |> ICalendar.RRULE.deserialize
+      {:error, ["You can only set UNTIL or COUNT: not both at the same time"]}
 
   """
   def deserialize(rrule) when is_bitstring(rrule) do
