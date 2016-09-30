@@ -15,12 +15,22 @@ defmodule ICalendar.DeserializeTest do
       END:VEVENT
       """
       event = ICalendar.from_ics(ics)
-      assert event == %Event{
+      assert event == {:ok, %Event{
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
         summary: "Going fishing",
         description: "Escape from the world. Stare at some water."
-      }
+      }}
+    end
+
+    test "Bad parameter returns {:error, _}" do
+      bad_ics = """
+      BEGIN:VEVENT
+      DTSTART:XXXXXXXXXXXXXXXX
+      END:VEVENT
+      """
+      event = ICalendar.from_ics(bad_ics)
+      assert event == {:error, ["DTSTART: Expected `1-4 digit year` at line 1, column 1."]}
     end
 
     test "with Timezone" do
@@ -31,7 +41,7 @@ defmodule ICalendar.DeserializeTest do
       END:VEVENT
       """
 
-      event = ICalendar.from_ics(ics)
+      {:ok, event} = ICalendar.from_ics(ics)
       assert event.dtstart.time_zone == "America/Chicago"
       assert event.dtend.time_zone == "America/Chicago"
     end
@@ -51,7 +61,7 @@ defmodule ICalendar.DeserializeTest do
       END:VEVENT
       """
 
-      event = ICalendar.from_ics(ics)
+      {:ok, event} = ICalendar.from_ics(ics)
       assert event.rrule.by_day == [:tuesday, :friday]
       assert event.rrule.by_month == [:april]
       assert event.rrule.by_month_day == [1, 3, 5]

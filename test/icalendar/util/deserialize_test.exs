@@ -18,13 +18,13 @@ defmodule ICalendar.Util.DeserializeTest do
       |> String.split("\n")
       |> Deserialize.build_event
 
-    assert event == %Event{
+    assert event == {:ok, %Event{
       description: "Escape from the world. Stare at some water.",
       dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
       dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
       location: nil,
       summary: "Going fishing"
-    }
+    }}
   end
 
   test "Handles empty calendars correctly" do
@@ -37,12 +37,12 @@ defmodule ICalendar.Util.DeserializeTest do
       |> String.split("\n")
       |> Deserialize.build_event
 
-    assert event == %Event{
+    assert event == {:ok, %Event{
       dtstart: nil,
       dtend: nil,
       summary: nil,
       description: nil
-    }
+    }}
   end
 
 end

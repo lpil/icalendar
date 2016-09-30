@@ -112,7 +112,7 @@ defmodule ICalendarTest do
         location: "123 Fun Street, Toronto ON, Canada"
       }
     ]
-    new_event =
+    {:ok, new_event} =
       %ICalendar{ events: events }
       |> ICalendar.to_ics
       |> ICalendar.from_ics

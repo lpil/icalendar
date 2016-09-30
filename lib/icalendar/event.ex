@@ -8,7 +8,12 @@ defmodule ICalendar.Event do
             dtend:       nil,
             description: nil,
             location:    nil,
-            rrule:       nil
+            rrule:       nil,
+            errors:      []
+
+  def valid(%ICalendar.Event{errors: []}), do: true
+  def valid(_), do: false
+
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do
@@ -30,6 +35,7 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
     |> Enum.join
   end
 
+  defp to_kv({:errors, _}), do: ""
   defp to_kv({key, value}) do
     name  = key |> to_string |> String.upcase
     KV.build(name, value)

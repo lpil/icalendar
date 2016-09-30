@@ -14,11 +14,19 @@ defmodule ICalendar.Util.Deserialize do
     end)
   end
 
-
   def build_event(lines) when is_list(lines) do
     lines
     |> Enum.map(&retrieve_kvs/1)
     |> Enum.reduce(%Event{}, &parse_attr/2)
+    |> validate
+  end
+
+  def validate(event = %ICalendar.Event{}) do
+    if ICalendar.Event.valid(event) do
+      {:ok, event}
+    else
+      {:error, event.errors}
+    end
   end
 
   @doc ~S"""
@@ -32,8 +40,11 @@ defmodule ICalendar.Util.Deserialize do
     # Split Line up into key and value
     [key, value] = String.split(line, ":", parts: 2, trim: true)
     [key, params] = retrieve_params(key)
-
-    %Property{key: String.upcase(key), value: value, params: params}
+    %Property{
+      key: String.upcase(key),
+      value: value,
+      params: params
+    }
   end
 
   @doc ~S"""
@@ -60,7 +71,7 @@ defmodule ICalendar.Util.Deserialize do
         Map.merge(acc, %{key => val})
       end)
 
-    [key, params]
+      [key, params]
   end
 
   def parse_attr(
@@ -75,7 +86,8 @@ defmodule ICalendar.Util.Deserialize do
   ) do
     case to_date(dtstart, params) do
       {:ok, timestamp} -> %{acc | dtstart: timestamp}
-      {:error, term}   -> %{acc | errors: [term | acc.errors]}
+      {:error, term}   ->
+        %{acc | errors: ["DTSTART: #{term}" | acc.errors]}
     end
   end
   def parse_attr(
@@ -84,7 +96,8 @@ defmodule ICalendar.Util.Deserialize do
   ) do
     case to_date(dtend, params) do
       {:ok, timestamp} -> %{acc | dtend: timestamp}
-      {:error, term}   -> %{acc | errors: [term | acc.errors]}
+      {:error, term}   ->
+        %{acc | errors: ["DTEND: #{term}" | acc.errors]}
     end
   end
   def parse_attr(
@@ -105,7 +118,8 @@ defmodule ICalendar.Util.Deserialize do
   ) do
     case RRULE.deserialize(rrule) do
       {:ok, rrule}   -> %{acc | rrule: rrule}
-      {:error, term} -> %{acc | errors: [term | acc.errors]}
+      {:error, term} ->
+        %{acc | errors: ["RRULE: #{term}" | acc.errors]}
     end
   end
   def parse_attr(_, acc), do: acc
