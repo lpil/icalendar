@@ -36,6 +36,15 @@ defmodule ICalendar.DeserializeTest do
       assert event.dtend.time_zone == "America/Chicago"
     end
 
-  end
+    test "with CR+LF line endings" do
+      ics = """
+      DESCRIPTION:CR+LF line endings\r\nSUMMARY:Going fishing\r
+      DTEND:20151224T084500Z\r\nDTSTART:20151224T083000Z\r
+      END:VEVENT
+      """
 
+      event = ICalendar.from_ics(ics)
+      assert event.description == "CR+LF line endings"
+    end
+  end
 end
