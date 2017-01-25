@@ -12,6 +12,7 @@ defmodule ICalendar.DeserializeTest do
       SUMMARY:Going fishing
       DTEND:20151224T084500Z
       DTSTART:20151224T083000Z
+      LOCATION:123 Fun Street\\, Toronto ON\\, Canada
       END:VEVENT
       """
       event = ICalendar.from_ics(ics)
@@ -19,7 +20,8 @@ defmodule ICalendar.DeserializeTest do
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
         summary: "Going fishing",
-        description: "Escape from the world. Stare at some water."
+        description: "Escape from the world. Stare at some water.",
+        location: "123 Fun Street, Toronto ON, Canada"
       }
     end
 
