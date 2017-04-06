@@ -40,7 +40,7 @@ defmodule ICalendar.Mixfile do
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
 
       # For full timezone support
-      {:timex, "~> 3.0.0"}
+      {:timex, "~> 3.0"}
     ]
   end
 end
