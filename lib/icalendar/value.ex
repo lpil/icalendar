@@ -81,6 +81,23 @@ defimpl Value, for: DateTime do
   end
 end
 
+defimpl Value, for: Date do
+  use Timex
+
+  @doc """
+  This function converts DateTimes to UTC timezone and then into Strings in the
+  iCal format
+  """
+  def to_ics(%Date{} = timestamp) do
+    format_string = "{YYYY}{0M}{0D}"
+
+    {:ok, result} =
+      timestamp
+      |> Timex.format(format_string)
+    result
+  end
+end
+
 defimpl Value, for: Any do
   def to_ics(x), do: x
 end
