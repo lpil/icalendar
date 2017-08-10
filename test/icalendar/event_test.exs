@@ -24,6 +24,19 @@ defmodule ICalendar.EventTest do
     """
   end
 
+  test "ICalendar.to_ics/1 with date start and end" do
+    ics = %Event{
+      dtstart: Timex.to_date({2015, 12, 24}),
+      dtend:   Timex.to_date({2015, 12, 24}),
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    DTEND:20151224
+    DTSTART:20151224
+    END:VEVENT
+    """
+  end
+
   test "ICalendar.to_ics/1 with datetime start and end" do
     ics = %Event{
       dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
