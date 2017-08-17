@@ -7,7 +7,8 @@ defmodule ICalendar.Event do
             dtstart:     nil,
             dtend:       nil,
             description: nil,
-            location:    nil
+            location:    nil,
+            url:         nil
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do

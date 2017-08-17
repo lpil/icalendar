@@ -50,8 +50,7 @@ defmodule ICalendar.Util.KV do
 
   defp sanitize(string) when is_bitstring(string) do
     string
-    |> String.replace(~r{([\,;])}, "//\\g{1}")
-    |> String.replace("//", "\\")
+    |> String.replace(~r{([\,;])}, "\\\\\\g{1}")
   end
 
 end
