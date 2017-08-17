@@ -69,6 +69,30 @@ defmodule ICalendar.EventTest do
     DTSTART;TZID=America/Chicago:20151224T083000
     END:VEVENT
     """
+  end
 
+  test "ICalendar.to_ics/1 does not damage url in description" do
+    ics = %Event{
+      summary:     "Going fishing",
+      description: "See this link http://example.com/pub" <>
+                   "/calendars/jsmith/mytime.ics",
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    DESCRIPTION:See this link http://example.com/pub/calendars/jsmith/mytime.ics
+    SUMMARY:Going fishing
+    END:VEVENT
+    """
+  end
+
+  test "ICalendar.to_ics/1 with url" do
+    ics = %Event{
+      url: "http://example.com/pub/calendars/jsmith/mytime.ics"
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    URL:http://example.com/pub/calendars/jsmith/mytime.ics
+    END:VEVENT
+    """
   end
 end
