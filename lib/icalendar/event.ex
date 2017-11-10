@@ -9,11 +9,11 @@ defmodule ICalendar.Event do
             description: nil,
             location:    nil,
             rrule:       nil,
-            errors:      []
+            errors:      [],
+            url:         nil
 
   def valid(%ICalendar.Event{errors: []}), do: true
   def valid(_), do: false
-
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do

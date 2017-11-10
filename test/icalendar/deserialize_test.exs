@@ -12,6 +12,7 @@ defmodule ICalendar.DeserializeTest do
       SUMMARY:Going fishing
       DTEND:20151224T084500Z
       DTSTART:20151224T083000Z
+      LOCATION:123 Fun Street\\, Toronto ON\\, Canada
       END:VEVENT
       """
       event = ICalendar.from_ics(ics)
@@ -19,7 +20,8 @@ defmodule ICalendar.DeserializeTest do
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
         summary: "Going fishing",
-        description: "Escape from the world. Stare at some water."
+        description: "Escape from the world. Stare at some water.",
+        location: "123 Fun Street, Toronto ON, Canada"
       }}
     end
 
@@ -46,7 +48,7 @@ defmodule ICalendar.DeserializeTest do
       assert event.dtstart.time_zone == "America/Chicago"
       assert event.dtend.time_zone == "America/Chicago"
     end
-
+    
     test "with RRULE" do
       rrule = [
         "FREQ=DAILY",
@@ -71,6 +73,15 @@ defmodule ICalendar.DeserializeTest do
         Timex.to_datetime({{2222, 12, 24}, {8, 45, 0}}, "Etc/UTC")
     end
 
-  end
+    test "with CR+LF line endings" do
+      ics = """
+      DESCRIPTION:CR+LF line endings\r\nSUMMARY:Going fishing\r
+      DTEND:20151224T084500Z\r\nDTSTART:20151224T083000Z\r
+      END:VEVENT
+      """
 
+      event = ICalendar.from_ics(ics)
+      assert event.description == "CR+LF line endings"
+    end
+  end
 end

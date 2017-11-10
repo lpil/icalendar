@@ -1,7 +1,7 @@
 defmodule ICalendar.Mixfile do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.4.0"
 
   def project do
     [
@@ -10,7 +10,7 @@ defmodule ICalendar.Mixfile do
       elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
-      deps: deps,
+      deps: deps(),
 
       name: "ICalendar",
       source_url: "https://github.com/lpil/icalendar",
@@ -40,7 +40,7 @@ defmodule ICalendar.Mixfile do
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
 
       # For full timezone support
-      {:timex, "~> 3.0.0"}
+      {:timex, "~> 3.0"}
     ]
   end
 end
