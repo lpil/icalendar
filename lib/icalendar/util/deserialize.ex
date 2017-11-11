@@ -102,10 +102,10 @@ defmodule ICalendar.Util.Deserialize do
       ...> Timex.to_erl(date)
       {{3993, 4, 7}, {15, 30, 22}}
 
-  And should return nil for incorrect dates:
+  And should return error for incorrect dates:
 
       iex> ICalendar.Util.Deserialize.to_date("1993/04/07")
-      {:error, "Expected `1-2 digit month` at line 1, column 5."}
+      {:error, "Expected `2 digit month` at line 1, column 5."}
 
   It should handle timezones from  the Olson Database:
 
