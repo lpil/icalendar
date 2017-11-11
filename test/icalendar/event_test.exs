@@ -95,4 +95,26 @@ defmodule ICalendar.EventTest do
     END:VEVENT
     """
   end
+
+  test "ICalendar.to_ics/1 with integer UID" do
+    ics = %Event{
+      uid: 815
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    UID:815
+    END:VEVENT
+    """
+  end
+
+  test "ICalendar.to_ics/1 with string UID" do
+    ics = %Event{
+      uid: "0815"
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    UID:0815
+    END:VEVENT
+    """
+  end
 end
