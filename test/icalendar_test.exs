@@ -93,4 +93,79 @@ defmodule ICalendarTest do
     assert events |> List.first == new_event
   end
 
+  test "encode_to_iodata/2" do
+    events = [
+      %ICalendar.Event{
+        summary: "Film with Amy and Adam",
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtend:   Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
+        description: "Let's go see Star Wars.",
+      },
+      %ICalendar.Event{
+        summary: "Morning meeting",
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {19, 00, 00}}),
+        dtend:   Timex.to_datetime({{2015, 12, 24}, {22, 30, 00}}),
+        description: "A big long meeting with lots of details.",
+      },
+    ]
+    cal = %ICalendar{ events: events }
+
+    assert {:ok, ical} = ICalendar.encode_to_iodata(cal, [])
+    assert ical == """
+    BEGIN:VCALENDAR
+    CALSCALE:GREGORIAN
+    VERSION:2.0
+    BEGIN:VEVENT
+    DESCRIPTION:Let's go see Star Wars.
+    DTEND;TZID=Etc/UTC:20151224T084500
+    DTSTART;TZID=Etc/UTC:20151224T083000
+    SUMMARY:Film with Amy and Adam
+    END:VEVENT
+    BEGIN:VEVENT
+    DESCRIPTION:A big long meeting with lots of details.
+    DTEND;TZID=Etc/UTC:20151224T223000
+    DTSTART;TZID=Etc/UTC:20151224T190000
+    SUMMARY:Morning meeting
+    END:VEVENT
+    END:VCALENDAR
+    """
+  end
+
+  test "encode_to_iodata/1" do
+    events = [
+      %ICalendar.Event{
+        summary: "Film with Amy and Adam",
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtend:   Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
+        description: "Let's go see Star Wars.",
+      },
+      %ICalendar.Event{
+        summary: "Morning meeting",
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {19, 00, 00}}),
+        dtend:   Timex.to_datetime({{2015, 12, 24}, {22, 30, 00}}),
+        description: "A big long meeting with lots of details.",
+      },
+    ]
+    cal = %ICalendar{ events: events }
+
+    assert {:ok, ical} = ICalendar.encode_to_iodata(cal)
+    assert ical == """
+    BEGIN:VCALENDAR
+    CALSCALE:GREGORIAN
+    VERSION:2.0
+    BEGIN:VEVENT
+    DESCRIPTION:Let's go see Star Wars.
+    DTEND;TZID=Etc/UTC:20151224T084500
+    DTSTART;TZID=Etc/UTC:20151224T083000
+    SUMMARY:Film with Amy and Adam
+    END:VEVENT
+    BEGIN:VEVENT
+    DESCRIPTION:A big long meeting with lots of details.
+    DTEND;TZID=Etc/UTC:20151224T223000
+    DTSTART;TZID=Etc/UTC:20151224T190000
+    SUMMARY:Morning meeting
+    END:VEVENT
+    END:VCALENDAR
+    """
+  end
 end
