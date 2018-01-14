@@ -85,6 +85,36 @@ defmodule ICalendar.Util.Deserialize do
   ) do
     %{acc | location: desanitized(location)}
   end
+  def parse_attr(
+    %Property{key: "COMMENT", value: comment},
+    acc
+  ) do
+    %{acc | comment: desanitized(comment)}
+  end
+  def parse_attr(
+    %Property{key: "STATUS", value: status},
+    acc
+  ) do
+    %{acc | status: status |> desanitized() |> String.downcase() |> String.to_atom()}
+  end
+  def parse_attr(
+    %Property{key: "CATEGORIES", value: categories},
+    acc
+  ) do
+    %{acc | categories: String.split(desanitized(categories), ",")}
+  end
+  def parse_attr(
+    %Property{key: "CLASS", value: class},
+    acc
+  ) do
+    %{acc | class: class |> desanitized() |> String.downcase() |> String.to_atom()}
+  end
+  def parse_attr(
+    %Property{key: "GEO", value: geo},
+    acc
+  ) do
+    %{acc | geo: to_geo(geo)}
+  end
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
@@ -130,6 +160,15 @@ defmodule ICalendar.Util.Deserialize do
 
   def to_date(date_string) do
     to_date(date_string, %{"TZID" => "Etc/UTC"})
+  end
+
+  defp to_geo(geo) do
+    geo
+    |> desanitized()
+    |> String.split(";")
+    |> Enum.map(fn x -> Float.parse(x) end)
+    |> Enum.map(fn {x, _} -> x end)
+    |> List.to_tuple()
   end
 
   @doc ~S"""

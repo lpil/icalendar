@@ -9,7 +9,12 @@ defmodule ICalendar.Event do
             description: nil,
             location:    nil,
             url:         nil,
-            uid:         nil
+            uid:         nil,
+            status:      nil,
+            categories:  nil,
+            class:       nil,
+            comment:     nil,
+            geo:         nil
 
 end
 

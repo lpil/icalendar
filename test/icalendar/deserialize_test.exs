@@ -9,10 +9,15 @@ defmodule ICalendar.DeserializeTest do
       ics = """
       BEGIN:VEVENT
       DESCRIPTION:Escape from the world. Stare at some water.
+      COMMENT:Don't forget to take something to eat !
       SUMMARY:Going fishing
       DTEND:20151224T084500Z
       DTSTART:20151224T083000Z
       LOCATION:123 Fun Street\\, Toronto ON\\, Canada
+      STATUS:TENTATIVE
+      CATEGORIES:Fishing,Nature
+      CLASS:PRIVATE
+      GEO:43.6978819;-79.3810277
       END:VEVENT
       """
       event = ICalendar.from_ics(ics)
@@ -21,7 +26,12 @@ defmodule ICalendar.DeserializeTest do
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
         summary: "Going fishing",
         description: "Escape from the world. Stare at some water.",
-        location: "123 Fun Street, Toronto ON, Canada"
+        location: "123 Fun Street, Toronto ON, Canada",
+        status: :tentative,
+        categories: ["Fishing", "Nature"],
+        comment: "Don't forget to take something to eat !",
+        class: :private,
+        geo: {43.6978819, -79.3810277}
       }
     end
 

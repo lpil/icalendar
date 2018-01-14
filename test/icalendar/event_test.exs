@@ -15,9 +15,11 @@ defmodule ICalendar.EventTest do
     ics = %Event{
       summary:     "Going fishing",
       description: "Escape from the world. Stare at some water.",
+      comment: "Don't forget to take something to eat !"
     } |> ICalendar.to_ics
     assert ics == """
     BEGIN:VEVENT
+    COMMENT:Don't forget to take something to eat !
     DESCRIPTION:Escape from the world. Stare at some water.
     SUMMARY:Going fishing
     END:VEVENT
@@ -114,6 +116,50 @@ defmodule ICalendar.EventTest do
     assert ics == """
     BEGIN:VEVENT
     UID:0815
+    END:VEVENT
+    """
+  end
+
+  test "ICalendar.to_ics/1 with geo" do
+    ics = %Event{
+      geo: {43.6978819, -79.3810277}
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    GEO:43.6978819;-79.3810277
+    END:VEVENT
+    """
+  end
+
+  test "ICalendar.to_ics/1 with categories" do
+    ics = %Event{
+      categories: ["Fishing", "Nature", "Sport"],
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    CATEGORIES:Fishing\\,Nature\\,Sport
+    END:VEVENT
+    """
+  end
+
+  test "ICalendar.to_ics/1 with status" do
+    ics = %Event{
+      status: :tentative
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    STATUS:TENTATIVE
+    END:VEVENT
+    """
+  end
+
+  test "ICalendar.to_ics/1 with class" do
+    ics = %Event{
+      class: :private
+    } |> ICalendar.to_ics
+    assert ics == """
+    BEGIN:VEVENT
+    CLASS:PRIVATE
     END:VEVENT
     """
   end
