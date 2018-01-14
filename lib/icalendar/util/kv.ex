@@ -36,6 +36,22 @@ defmodule ICalendar.Util.KV do
     build_sanitized(key, Value.to_ics(value))
   end
 
+  def build("CATEGORIES" = key, value) do
+    build_sanitized(key, Enum.join(Value.to_ics(value), ","))
+  end
+
+  def build("STATUS" = key, value) when is_atom(value) do
+    build_sanitized(key, Value.to_ics(value |> to_string |> String.upcase))
+  end
+
+  def build("CLASS" = key, value) when is_atom(value) do
+    build_sanitized(key, Value.to_ics(value |> to_string |> String.upcase))
+  end
+
+  def build("GEO" = key, {lat, lon}) do
+    "#{key}:#{lat};#{lon}\n"
+  end
+
   def build(key, date = %DateTime{}) do
     "#{key};TZID=#{date.time_zone}:#{Value.to_ics(date)}\n"
   end
