@@ -95,7 +95,9 @@ defmodule ICalendar.Util.Deserialize do
     %Property{key: "STATUS", value: status},
     acc
   ) do
-    %{acc | status: status |> desanitized() |> String.downcase() |> String.to_atom()}
+    %{acc |
+      status: status |> desanitized() |> String.downcase() |> String.to_atom()
+    }
   end
   def parse_attr(
     %Property{key: "CATEGORIES", value: categories},
@@ -107,7 +109,9 @@ defmodule ICalendar.Util.Deserialize do
     %Property{key: "CLASS", value: class},
     acc
   ) do
-    %{acc | class: class |> desanitized() |> String.downcase() |> String.to_atom()}
+    %{acc |
+      class: class |> desanitized() |> String.downcase() |> String.to_atom()
+    }
   end
   def parse_attr(
     %Property{key: "GEO", value: geo},
