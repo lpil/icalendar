@@ -144,7 +144,7 @@ defmodule ICalendar.EventTest do
 
   test "ICalendar.to_ics/1 with status" do
     ics = %Event{
-      status: :tentative
+      status: "tentative"
     } |> ICalendar.to_ics
     assert ics == """
     BEGIN:VEVENT
@@ -155,7 +155,7 @@ defmodule ICalendar.EventTest do
 
   test "ICalendar.to_ics/1 with class" do
     ics = %Event{
-      class: :private
+      class: "private"
     } |> ICalendar.to_ics
     assert ics == """
     BEGIN:VEVENT

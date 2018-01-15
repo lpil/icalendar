@@ -27,10 +27,10 @@ defmodule ICalendar.DeserializeTest do
         summary: "Going fishing",
         description: "Escape from the world. Stare at some water.",
         location: "123 Fun Street, Toronto ON, Canada",
-        status: :tentative,
+        status: "tentative",
         categories: ["Fishing", "Nature"],
         comment: "Don't forget to take something to eat !",
-        class: :private,
+        class: "private",
         geo: {43.6978819, -79.3810277}
       }
     end
