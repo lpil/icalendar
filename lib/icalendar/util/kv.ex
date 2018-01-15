@@ -40,11 +40,11 @@ defmodule ICalendar.Util.KV do
     build_sanitized(key, Enum.join(Value.to_ics(value), ","))
   end
 
-  def build("STATUS" = key, value) when is_atom(value) do
+  def build("STATUS" = key, value) do
     build_sanitized(key, Value.to_ics(value |> to_string |> String.upcase))
   end
 
-  def build("CLASS" = key, value) when is_atom(value) do
+  def build("CLASS" = key, value) do
     build_sanitized(key, Value.to_ics(value |> to_string |> String.upcase))
   end
 
