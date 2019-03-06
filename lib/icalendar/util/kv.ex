@@ -37,7 +37,7 @@ defmodule ICalendar.Util.KV do
   end
 
   def build("CATEGORIES" = key, value) do
-    build_sanitized(key, Enum.join(Value.to_ics(value), ","))
+    "#{key}:#{Enum.join(Value.to_ics(value), ",")}\n"
   end
 
   def build("STATUS" = key, value) do

@@ -137,7 +137,7 @@ defmodule ICalendar.EventTest do
     } |> ICalendar.to_ics
     assert ics == """
     BEGIN:VEVENT
-    CATEGORIES:Fishing\\,Nature\\,Sport
+    CATEGORIES:Fishing,Nature,Sport
     END:VEVENT
     """
   end
