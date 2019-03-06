@@ -14,17 +14,17 @@ defmodule ICalendar.Util.DeserializeTest do
       DTSTART:20151224T083000Z
       END:VEVENT
       """
-      |> String.trim
+      |> String.trim()
       |> String.split("\n")
-      |> Deserialize.build_event
+      |> Deserialize.build_event()
 
     assert event == %Event{
-      description: "Escape from the world. Stare at some water.",
-      dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
-      dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
-      location: nil,
-      summary: "Going fishing"
-    }
+             description: "Escape from the world. Stare at some water.",
+             dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
+             dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
+             location: nil,
+             summary: "Going fishing"
+           }
   end
 
   test "Handles empty calendars correctly" do
@@ -33,16 +33,15 @@ defmodule ICalendar.Util.DeserializeTest do
       BEGIN:VEVENT
       END:VEVENT
       """
-      |> String.trim
+      |> String.trim()
       |> String.split("\n")
-      |> Deserialize.build_event
+      |> Deserialize.build_event()
 
     assert event == %Event{
-      dtstart: nil,
-      dtend: nil,
-      summary: nil,
-      description: nil
-    }
+             dtstart: nil,
+             dtend: nil,
+             summary: nil,
+             description: nil
+           }
   end
-
 end

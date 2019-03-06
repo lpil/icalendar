@@ -31,6 +31,7 @@ defmodule ICalendar do
   def encode_to_iodata(calendar, options \\ []) do
     {:ok, encode_to_iodata!(calendar, options)}
   end
+
   def encode_to_iodata!(calendar, _options \\ []) do
     to_ics(calendar)
   end
@@ -38,12 +39,13 @@ end
 
 defimpl ICalendar.Serialize, for: ICalendar do
   def to_ics(calendar) do
-  events = Enum.map( calendar.events, &ICalendar.Serialize.to_ics/1 )
-  """
-  BEGIN:VCALENDAR
-  CALSCALE:GREGORIAN
-  VERSION:2.0
-  #{events}END:VCALENDAR
-  """
+    events = Enum.map(calendar.events, &ICalendar.Serialize.to_ics/1)
+
+    """
+    BEGIN:VCALENDAR
+    CALSCALE:GREGORIAN
+    VERSION:2.0
+    #{events}END:VCALENDAR
+    """
   end
 end

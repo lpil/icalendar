@@ -41,11 +41,11 @@ defmodule ICalendar.Util.KV do
   end
 
   def build("STATUS" = key, value) do
-    build_sanitized(key, Value.to_ics(value |> to_string |> String.upcase))
+    build_sanitized(key, Value.to_ics(value |> to_string |> String.upcase()))
   end
 
   def build("CLASS" = key, value) do
-    build_sanitized(key, Value.to_ics(value |> to_string |> String.upcase))
+    build_sanitized(key, Value.to_ics(value |> to_string |> String.upcase()))
   end
 
   def build("GEO" = key, {lat, lon}) do
@@ -68,5 +68,4 @@ defmodule ICalendar.Util.KV do
     string
     |> String.replace(~r{([\,;])}, "\\\\\\g{1}")
   end
-
 end

@@ -4,7 +4,6 @@ defmodule ICalendar.DeserializeTest do
   alias ICalendar.Event
 
   describe "ICalendar.from_ics/1" do
-
     test "Single Event" do
       ics = """
       BEGIN:VEVENT
@@ -20,19 +19,21 @@ defmodule ICalendar.DeserializeTest do
       GEO:43.6978819;-79.3810277
       END:VEVENT
       """
+
       event = ICalendar.from_ics(ics)
+
       assert event == %Event{
-        dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
-        dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
-        summary: "Going fishing",
-        description: "Escape from the world. Stare at some water.",
-        location: "123 Fun Street, Toronto ON, Canada",
-        status: "tentative",
-        categories: ["Fishing", "Nature"],
-        comment: "Don't forget to take something to eat !",
-        class: "private",
-        geo: {43.6978819, -79.3810277}
-      }
+               dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
+               dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
+               summary: "Going fishing",
+               description: "Escape from the world. Stare at some water.",
+               location: "123 Fun Street, Toronto ON, Canada",
+               status: "tentative",
+               categories: ["Fishing", "Nature"],
+               comment: "Don't forget to take something to eat !",
+               class: "private",
+               geo: {43.6978819, -79.3810277}
+             }
     end
 
     test "with Timezone" do
