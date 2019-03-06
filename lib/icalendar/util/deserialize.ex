@@ -45,7 +45,7 @@ defmodule ICalendar.Util.Deserialize do
 
     params =
       params
-      |> Enum.reduce(%{}, fn(param, acc) ->
+      |> Enum.reduce(%{}, fn param, acc ->
         [key, val] = String.split(param, "=", parts: 2, trim: true)
         Map.merge(acc, %{key => val})
       end)
@@ -54,67 +54,77 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr(
-    %Property{key: "DESCRIPTION", value: description},
-    acc
-  ) do
+        %Property{key: "DESCRIPTION", value: description},
+        acc
+      ) do
     %{acc | description: desanitized(description)}
   end
+
   def parse_attr(
-    %Property{key: "DTSTART", value: dtstart, params: params},
-    acc
-  ) do
+        %Property{key: "DTSTART", value: dtstart, params: params},
+        acc
+      ) do
     {:ok, timestamp} = to_date(dtstart, params)
     %{acc | dtstart: timestamp}
   end
+
   def parse_attr(
-    %Property{key: "DTEND", value: dtend, params: params},
-    acc
-  ) do
+        %Property{key: "DTEND", value: dtend, params: params},
+        acc
+      ) do
     {:ok, timestamp} = to_date(dtend, params)
     %{acc | dtend: timestamp}
   end
+
   def parse_attr(
-    %Property{key: "SUMMARY", value: summary},
-    acc
-  ) do
+        %Property{key: "SUMMARY", value: summary},
+        acc
+      ) do
     %{acc | summary: desanitized(summary)}
   end
+
   def parse_attr(
-    %Property{key: "LOCATION", value: location},
-    acc
-  ) do
+        %Property{key: "LOCATION", value: location},
+        acc
+      ) do
     %{acc | location: desanitized(location)}
   end
+
   def parse_attr(
-    %Property{key: "COMMENT", value: comment},
-    acc
-  ) do
+        %Property{key: "COMMENT", value: comment},
+        acc
+      ) do
     %{acc | comment: desanitized(comment)}
   end
+
   def parse_attr(
-    %Property{key: "STATUS", value: status},
-    acc
-  ) do
+        %Property{key: "STATUS", value: status},
+        acc
+      ) do
     %{acc | status: status |> desanitized() |> String.downcase()}
   end
+
   def parse_attr(
-    %Property{key: "CATEGORIES", value: categories},
-    acc
-  ) do
+        %Property{key: "CATEGORIES", value: categories},
+        acc
+      ) do
     %{acc | categories: String.split(desanitized(categories), ",")}
   end
+
   def parse_attr(
-    %Property{key: "CLASS", value: class},
-    acc
-  ) do
+        %Property{key: "CLASS", value: class},
+        acc
+      ) do
     %{acc | class: class |> desanitized() |> String.downcase()}
   end
+
   def parse_attr(
-    %Property{key: "GEO", value: geo},
-    acc
-  ) do
+        %Property{key: "GEO", value: geo},
+        acc
+      ) do
     %{acc | geo: to_geo(geo)}
   end
+
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
@@ -148,7 +158,7 @@ defmodule ICalendar.Util.Deserialize do
     date_string =
       case String.last(date_string) do
         "Z" -> date_string
-        _   -> date_string <> "Z"
+        _ -> date_string <> "Z"
       end
 
     Timex.parse(date_string <> timezone, "{YYYY}{0M}{0D}T{h24}{m}{s}Z{Zname}")

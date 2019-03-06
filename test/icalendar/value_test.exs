@@ -29,15 +29,17 @@ defmodule ICalendar.ValueTest do
   end
 
   test "value of a string with newline" do
-    result = Value.to_ics """
-    Hello
-    World!
-    """
+    result =
+      Value.to_ics("""
+      Hello
+      World!
+      """)
+
     assert result == ~S"Hello\nWorld!\n"
   end
 
   test "value of a string with newline like chars" do
-    result = Value.to_ics ~S"Hi\nthere"
+    result = Value.to_ics(~S"Hi\nthere")
     assert result == ~S"Hi\\nthere"
   end
 end
