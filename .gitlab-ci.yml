@@ -1,0 +1,15 @@
+image: elixir:latest
+
+elixir:
+  before_script:
+    - mix local.hex --force
+    - mix deps.get
+  script:
+    - mix compile --warnings-as-errors
+    - mix format --check-formatted --dry-run
+    - mix hex.outdated
+    - mix test
+    - mix docs
+  cache:
+    paths:
+      - deps
