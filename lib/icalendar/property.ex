@@ -6,5 +6,4 @@ defmodule ICalendar.Property do
   defstruct key: nil,
             value: nil,
             params: %{}
-
 end

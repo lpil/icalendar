@@ -3,19 +3,18 @@ defmodule ICalendar.Event do
   Calendars have events.
   """
 
-  defstruct summary:     nil,
-            dtstart:     nil,
-            dtend:       nil,
+  defstruct summary: nil,
+            dtstart: nil,
+            dtend: nil,
             description: nil,
-            location:    nil,
-            url:         nil,
-            uid:         nil,
-            status:      nil,
-            categories:  nil,
-            class:       nil,
-            comment:     nil,
-            geo:         nil
-
+            location: nil,
+            url: nil,
+            uid: nil,
+            status: nil,
+            categories: nil,
+            class: nil,
+            comment: nil,
+            geo: nil
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do
@@ -23,6 +22,7 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
 
   def to_ics(event) do
     contents = to_kvs(event)
+
     """
     BEGIN:VEVENT
     #{contents}END:VEVENT
@@ -31,14 +31,14 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
 
   defp to_kvs(event) do
     event
-    |> Map.from_struct
+    |> Map.from_struct()
     |> Enum.map(&to_kv/1)
-    |> Enum.sort
-    |> Enum.join
+    |> Enum.sort()
+    |> Enum.join()
   end
 
   defp to_kv({key, value}) do
-    name  = key |> to_string |> String.upcase
+    name = key |> to_string |> String.upcase()
     KV.build(name, value)
   end
 end

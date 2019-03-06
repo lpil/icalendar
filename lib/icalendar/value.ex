@@ -27,27 +27,27 @@ defimpl Value, for: Tuple do
   defmacro is_datetime_tuple(x) do
     quote do
       # Year
-      ( unquote(x) |> elem2(0, 0)  |> is_integer) and
       # Month
-      ( unquote(x) |> elem2(0, 1)  |> is_integer) and
-      ((unquote(x) |> elem2(0, 1)) <= 12) and
-      ((unquote(x) |> elem2(0, 1)) >= 1) and
       # Day
-      ( unquote(x) |> elem2(0, 2)  |> is_integer) and
-      ((unquote(x) |> elem2(0, 2)) <= 31) and
-      ((unquote(x) |> elem2(0, 2)) >= 1) and
       # Hour
-      ( unquote(x) |> elem2(1, 0)  |> is_integer) and
-      ((unquote(x) |> elem2(1, 0)) <= 23) and
-      ((unquote(x) |> elem2(1, 0)) >= 0) and
       # Minute
-      ( unquote(x) |> elem2(1, 1)  |> is_integer) and
-      ((unquote(x) |> elem2(1, 1)) <= 59) and
-      ((unquote(x) |> elem2(1, 1)) >= 0) and
       # Second
-      ( unquote(x) |> elem2(1, 2)  |> is_integer) and
-      ((unquote(x) |> elem2(1, 2)) <= 60) and
-      ((unquote(x) |> elem2(1, 2)) >= 0)
+      unquote(x) |> elem2(0, 0) |> is_integer and
+        unquote(x) |> elem2(0, 1) |> is_integer and
+        unquote(x) |> elem2(0, 1) <= 12 and
+        unquote(x) |> elem2(0, 1) >= 1 and
+        unquote(x) |> elem2(0, 2) |> is_integer and
+        unquote(x) |> elem2(0, 2) <= 31 and
+        unquote(x) |> elem2(0, 2) >= 1 and
+        unquote(x) |> elem2(1, 0) |> is_integer and
+        unquote(x) |> elem2(1, 0) <= 23 and
+        unquote(x) |> elem2(1, 0) >= 0 and
+        unquote(x) |> elem2(1, 1) |> is_integer and
+        unquote(x) |> elem2(1, 1) <= 59 and
+        unquote(x) |> elem2(1, 1) >= 0 and
+        unquote(x) |> elem2(1, 2) |> is_integer and
+        unquote(x) |> elem2(1, 2) <= 60 and
+        unquote(x) |> elem2(1, 2) >= 0
     end
   end
 
@@ -56,12 +56,11 @@ defimpl Value, for: Tuple do
   """
   def to_ics(timestamp) when is_datetime_tuple(timestamp) do
     timestamp
-    |> Timex.to_datetime
-    |> Value.to_ics
+    |> Timex.to_datetime()
+    |> Value.to_ics()
   end
 
   def to_ics(x), do: x
-
 end
 
 defimpl Value, for: DateTime do
@@ -77,6 +76,7 @@ defimpl Value, for: DateTime do
     {:ok, result} =
       timestamp
       |> Timex.format(format_string)
+
     result
   end
 end
@@ -94,6 +94,7 @@ defimpl Value, for: Date do
     {:ok, result} =
       timestamp
       |> Timex.format(format_string)
+
     result
   end
 end
