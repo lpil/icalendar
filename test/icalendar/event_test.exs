@@ -56,8 +56,8 @@ defmodule ICalendar.EventTest do
 
     assert ics == """
            BEGIN:VEVENT
-           DTEND;TZID=Etc/UTC:20151224T084500
-           DTSTART;TZID=Etc/UTC:20151224T083000
+           DTEND:20151224T084500
+           DTSTART:20151224T083000
            END:VEVENT
            """
   end
