@@ -1,6 +1,8 @@
 defmodule ICalendarTest do
   use ExUnit.Case
 
+  @vendor "ICalendar Test"
+
   test "ICalendar.to_ics/1 of empty calendar" do
     ics = %ICalendar{} |> ICalendar.to_ics()
 
@@ -8,6 +10,19 @@ defmodule ICalendarTest do
            BEGIN:VCALENDAR
            CALSCALE:GREGORIAN
            VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
+           END:VCALENDAR
+           """
+  end
+
+  test "ICalendar.to_ics/1 of empty calendar with custom vendor" do
+    ics = %ICalendar{} |> ICalendar.to_ics(vendor: @vendor)
+
+    assert ics == """
+           BEGIN:VCALENDAR
+           CALSCALE:GREGORIAN
+           VERSION:2.0
+           PRODID:-//Elixir ICalendar//#{@vendor}//EN
            END:VCALENDAR
            """
   end
@@ -34,6 +49,7 @@ defmodule ICalendarTest do
            BEGIN:VCALENDAR
            CALSCALE:GREGORIAN
            VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
            DTEND;TZID=Etc/UTC:20151224T084500
@@ -67,6 +83,7 @@ defmodule ICalendarTest do
            BEGIN:VCALENDAR
            CALSCALE:GREGORIAN
            VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars\\, and have fun.
            DTEND;TZID=Etc/UTC:20151224T084500
@@ -91,7 +108,7 @@ defmodule ICalendarTest do
 
     new_event =
       %ICalendar{events: events}
-      |> ICalendar.to_ics()
+      |> ICalendar.to_ics(vendor: @vendor)
       |> ICalendar.from_ics()
 
     assert events |> List.first() == new_event
@@ -121,6 +138,7 @@ defmodule ICalendarTest do
            BEGIN:VCALENDAR
            CALSCALE:GREGORIAN
            VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
            DTEND;TZID=Etc/UTC:20151224T084500
@@ -161,6 +179,7 @@ defmodule ICalendarTest do
            BEGIN:VCALENDAR
            CALSCALE:GREGORIAN
            VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
            DTEND;TZID=Etc/UTC:20151224T084500

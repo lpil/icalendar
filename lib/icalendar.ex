@@ -4,7 +4,7 @@ defmodule ICalendar do
   """
 
   defstruct events: []
-  defdelegate to_ics(events), to: ICalendar.Serialize
+  defdelegate to_ics(events, options \\ []), to: ICalendar.Serialize
   defdelegate from_ics(events), to: ICalendar.Deserialize
 
   @doc """
@@ -38,13 +38,15 @@ defmodule ICalendar do
 end
 
 defimpl ICalendar.Serialize, for: ICalendar do
-  def to_ics(calendar) do
+  def to_ics(calendar, options \\ []) do
     events = Enum.map(calendar.events, &ICalendar.Serialize.to_ics/1)
+    vendor = Keyword.get(options, :vendor, "Elixir ICalendar")
 
     """
     BEGIN:VCALENDAR
     CALSCALE:GREGORIAN
     VERSION:2.0
+    PRODID:-//Elixir ICalendar//#{vendor}//EN
     #{events}END:VCALENDAR
     """
   end

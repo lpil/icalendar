@@ -10,6 +10,7 @@ defmodule ICalendar.Event do
             location: nil,
             url: nil,
             uid: nil,
+            prodid: nil,
             status: nil,
             categories: nil,
             class: nil,
@@ -20,7 +21,7 @@ end
 defimpl ICalendar.Serialize, for: ICalendar.Event do
   alias ICalendar.Util.KV
 
-  def to_ics(event) do
+  def to_ics(event, _options \\ []) do
     contents = to_kvs(event)
 
     """
