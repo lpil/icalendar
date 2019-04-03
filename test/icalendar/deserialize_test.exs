@@ -11,6 +11,7 @@ defmodule ICalendar.DeserializeTest do
       COMMENT:Don't forget to take something to eat !
       SUMMARY:Going fishing
       DTEND:20151224T084500Z
+      DTSTAMP:20151224T080000Z
       DTSTART:20151224T083000Z
       LOCATION:123 Fun Street\\, Toronto ON\\, Canada
       STATUS:TENTATIVE
@@ -25,6 +26,7 @@ defmodule ICalendar.DeserializeTest do
       assert event == %Event{
                dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 0}}),
                dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
+               dtstamp: Timex.to_datetime({{2015, 12, 24}, {8, 00, 0}}),
                summary: "Going fishing",
                description: "Escape from the world. Stare at some water.",
                location: "123 Fun Street, Toronto ON, Canada",

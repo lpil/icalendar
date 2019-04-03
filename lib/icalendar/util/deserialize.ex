@@ -92,6 +92,14 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr(
+        %Property{key: "DTSTAMP", value: dtstamp, params: params},
+        acc
+      ) do
+    {:ok, timestamp} = to_date(dtstamp, params)
+    %{acc | dtstamp: timestamp}
+  end
+
+  def parse_attr(
         %Property{key: "RRULE", value: rrule},
         acc
       ) do
