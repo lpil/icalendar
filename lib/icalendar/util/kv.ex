@@ -52,6 +52,10 @@ defmodule ICalendar.Util.KV do
     "#{key}:#{lat};#{lon}\n"
   end
 
+  def build(key, date = %DateTime{time_zone: "Etc/UTC"}) do
+    "#{key}:#{Value.to_ics(date)}\n"
+  end
+
   def build(key, date = %DateTime{}) do
     "#{key};TZID=#{date.time_zone}:#{Value.to_ics(date)}\n"
   end
