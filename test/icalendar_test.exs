@@ -52,14 +52,14 @@ defmodule ICalendarTest do
            PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
-           DTEND:20151224T084500
-           DTSTART:20151224T083000
+           DTEND:20151224T084500Z
+           DTSTART:20151224T083000Z
            SUMMARY:Film with Amy and Adam
            END:VEVENT
            BEGIN:VEVENT
            DESCRIPTION:A big long meeting with lots of details.
-           DTEND:20151224T223000
-           DTSTART:20151224T190000
+           DTEND:20151224T223000Z
+           DTSTART:20151224T190000Z
            SUMMARY:Morning meeting
            END:VEVENT
            END:VCALENDAR
@@ -86,8 +86,8 @@ defmodule ICalendarTest do
            PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars\\, and have fun.
-           DTEND:20151224T084500
-           DTSTART:20151224T083000
+           DTEND:20151224T084500Z
+           DTSTART:20151224T083000Z
            LOCATION:123 Fun Street\\, Toronto ON\\, Canada
            SUMMARY:Film with Amy and Adam
            END:VEVENT
@@ -141,14 +141,14 @@ defmodule ICalendarTest do
            PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
-           DTEND:20151224T084500
-           DTSTART:20151224T083000
+           DTEND:20151224T084500Z
+           DTSTART:20151224T083000Z
            SUMMARY:Film with Amy and Adam
            END:VEVENT
            BEGIN:VEVENT
            DESCRIPTION:A big long meeting with lots of details.
-           DTEND:20151224T223000
-           DTSTART:20151224T190000
+           DTEND:20151224T223000Z
+           DTSTART:20151224T190000Z
            SUMMARY:Morning meeting
            END:VEVENT
            END:VCALENDAR
@@ -182,14 +182,14 @@ defmodule ICalendarTest do
            PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
-           DTEND:20151224T084500
-           DTSTART:20151224T083000
+           DTEND:20151224T084500Z
+           DTSTART:20151224T083000Z
            SUMMARY:Film with Amy and Adam
            END:VEVENT
            BEGIN:VEVENT
            DESCRIPTION:A big long meeting with lots of details.
-           DTEND:20151224T223000
-           DTSTART:20151224T190000
+           DTEND:20151224T223000Z
+           DTSTART:20151224T190000Z
            SUMMARY:Morning meeting
            END:VEVENT
            END:VCALENDAR
