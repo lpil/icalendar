@@ -53,7 +53,7 @@ defmodule ICalendar.Util.KV do
   end
 
   def build(key, date = %DateTime{time_zone: "Etc/UTC"}) do
-    "#{key}:#{Value.to_ics(date)}\n"
+    "#{key}:#{Value.to_ics(date)}Z\n"
   end
 
   def build(key, date = %DateTime{}) do
