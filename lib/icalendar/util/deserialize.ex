@@ -21,8 +21,18 @@ defmodule ICalendar.Util.Deserialize do
   """
   def retrieve_kvs(line) do
     # Split Line up into key and value
-    [key, value] = String.split(line, ":", parts: 2, trim: true)
-    [key, params] = retrieve_params(key)
+    {key, value, params} =
+      case String.split(line, ":", parts: 2, trim: true) do
+        [key, value] ->
+          [key, params] = retrieve_params(key)
+          {key, value, params}
+
+        [key] ->
+          {key, nil, %{}}
+      end
+
+    # [key, value] = String.split(line, ":", parts: 2, trim: true)
+    # [key, params] = retrieve_params(key)
 
     %Property{key: String.upcase(key), value: value, params: params}
   end
@@ -52,6 +62,8 @@ defmodule ICalendar.Util.Deserialize do
 
     [key, params]
   end
+
+  def parse_attr(%Property{key: _, value: nil}, acc), do: acc
 
   def parse_attr(
         %Property{key: "DESCRIPTION", value: description},
@@ -162,6 +174,10 @@ defmodule ICalendar.Util.Deserialize do
       end
 
     Timex.parse(date_string <> timezone, "{YYYY}{0M}{0D}T{h24}{m}{s}Z{Zname}")
+  end
+
+  def to_date(date_string, %{"VALUE" => "DATE"}) do
+    Timex.parse(date_string, "{YYYY}{0M}{0D}")
   end
 
   def to_date(date_string, %{}) do

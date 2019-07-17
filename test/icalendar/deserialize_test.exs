@@ -51,6 +51,7 @@ defmodule ICalendar.DeserializeTest do
 
     test "with CR+LF line endings" do
       ics = """
+      BEGIN:VEVENT
       DESCRIPTION:CR+LF line endings\r\nSUMMARY:Going fishing\r
       DTEND:20151224T084500Z\r\nDTSTART:20151224T083000Z\r
       END:VEVENT

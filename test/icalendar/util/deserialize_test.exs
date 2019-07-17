@@ -44,4 +44,36 @@ defmodule ICalendar.Util.DeserializeTest do
              description: nil
            }
   end
+
+  test "Handles date strings" do
+    event =
+      """
+      BEGIN:VEVENT
+      DTSTART;VALUE=DATE:20190624
+      DTEND;VALUE=DATE:20190625
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert event == %Event{
+             dtend: ~N[2019-06-25 00:00:00],
+             dtstart: ~N[2019-06-24 00:00:00]
+           }
+  end
+
+  test "Handle empty keys" do
+    event =
+      """
+      BEGIN:VEVENT
+      DESCRIPTION:
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{} = event
+  end
 end
