@@ -177,7 +177,7 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def to_date(date_string, %{"VALUE" => "DATE"}) do
-    Timex.parse(date_string, "{YYYY}{0M}{0D}")
+    to_date(date_string <> "T000000Z")
   end
 
   def to_date(date_string, %{}) do
