@@ -52,7 +52,7 @@ defmodule ICalendar.Util.KV do
     "#{key}:#{lat};#{lon}\n"
   end
 
-  def build("ATTENDEES" = key, attendees) do
+  def build("ATTENDEES", attendees) do
     Enum.map(attendees, fn attendee ->
       params =
         for {key, val} <- attendee do

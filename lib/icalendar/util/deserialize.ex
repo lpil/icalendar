@@ -152,7 +152,7 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr(
-        %Property{key: "ORGANIZER", params: params, value: organizer},
+        %Property{key: "ORGANIZER", params: _params, value: organizer},
         acc
       ) do
     %{acc | organizer: organizer}
