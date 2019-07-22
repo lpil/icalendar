@@ -52,6 +52,21 @@ defmodule ICalendar.Util.KV do
     "#{key}:#{lat};#{lon}\n"
   end
 
+  def build("ATTENDEES" = key, attendees) do
+    Enum.map(attendees, fn attendee ->
+      params =
+        for {key, val} <- attendee do
+          unless key == :original_value do
+            ";#{key}=#{val}"
+          end
+        end
+        |> Enum.join()
+
+      "ATTENDEE#{params}:#{attendee.original_value}"
+    end)
+    |> Enum.join("\n")
+  end
+
   def build(key, date = %DateTime{time_zone: "Etc/UTC"}) do
     "#{key}:#{Value.to_ics(date)}Z\n"
   end

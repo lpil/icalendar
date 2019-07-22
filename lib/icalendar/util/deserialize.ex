@@ -137,6 +137,34 @@ defmodule ICalendar.Util.Deserialize do
     %{acc | geo: to_geo(geo)}
   end
 
+  def parse_attr(
+        %Property{key: "UID", value: uid},
+        acc
+      ) do
+    %{acc | uid: uid}
+  end
+
+  def parse_attr(
+        %Property{key: "LAST-MODIFIED", value: modified},
+        acc
+      ) do
+    %{acc | modified: modified}
+  end
+
+  def parse_attr(
+        %Property{key: "ORGANIZER", params: params, value: organizer},
+        acc
+      ) do
+    %{acc | organizer: organizer}
+  end
+
+  def parse_attr(
+        %Property{key: "ATTENDEE", params: params, value: value},
+        acc
+      ) do
+    %{acc | attendees: [Map.put(params, :original_value, value)] ++ acc.attendees}
+  end
+
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
