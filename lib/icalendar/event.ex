@@ -18,6 +18,7 @@ defmodule ICalendar.Event do
             geo: nil,
             modified: nil,
             organizer: nil,
+            sequence: nil,
             attendees: []
 end
 

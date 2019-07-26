@@ -165,6 +165,13 @@ defmodule ICalendar.Util.Deserialize do
     %{acc | attendees: [Map.put(params, :original_value, value)] ++ acc.attendees}
   end
 
+  def parse_attr(
+        %Property{key: "SEQUENCE", value: sequence},
+        acc
+      ) do
+    %{acc | sequence: sequence}
+  end
+
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
@@ -195,6 +202,15 @@ defmodule ICalendar.Util.Deserialize do
       [{{1998, 1, 19}, {2, 0, 0}}, "America/Chicago"]
   """
   def to_date(date_string, %{"TZID" => timezone}) do
+    # Microsoft Outlook calendar .ICS files report times in Greenwich Standard Time (UTC +0)
+    # so just convert this to UTC
+    timezone =
+      if Regex.match?(~r/\//, timezone) do
+        timezone
+      else
+        Timex.Timezone.Utils.to_olson(timezone)
+      end
+
     date_string =
       case String.last(date_string) do
         "Z" -> date_string

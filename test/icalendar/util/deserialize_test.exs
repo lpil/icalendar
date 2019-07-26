@@ -74,7 +74,7 @@ defmodule ICalendar.Util.DeserializeTest do
     assert %Event{} = event
   end
 
-  test "Include ORGANIZER in event" do
+  test "Include ORGANIZER and ATTENDEEs in event" do
     event =
       """
       BEGIN:VEVENT
@@ -99,6 +99,21 @@ defmodule ICalendar.Util.DeserializeTest do
       |> String.split("\n")
       |> Deserialize.build_event()
 
-      assert %Event{} = event
+    assert %Event{} = event
+  end
+
+  test "Convert other time zone formats to UTC" do
+    event =
+      """
+      BEGIN:VEVENT
+      DTSTART;TZID=Greenwich Standard Time:20190726T190000
+      DTEND;TZID=Greenwich Standard Time:20190726T213000
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{} = event
   end
 end
