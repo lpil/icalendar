@@ -148,7 +148,8 @@ defmodule ICalendar.Util.Deserialize do
         %Property{key: "LAST-MODIFIED", value: modified},
         acc
       ) do
-    %{acc | modified: modified}
+    {:ok, timestamp} = to_date(modified)
+    %{acc | modified: timestamp}
   end
 
   def parse_attr(
