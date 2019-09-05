@@ -15,7 +15,11 @@ defmodule ICalendar.Event do
             categories: nil,
             class: nil,
             comment: nil,
-            geo: nil
+            geo: nil,
+            modified: nil,
+            organizer: nil,
+            sequence: nil,
+            attendees: []
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do

@@ -21,8 +21,15 @@ defmodule ICalendar.Util.Deserialize do
   """
   def retrieve_kvs(line) do
     # Split Line up into key and value
-    [key, value] = String.split(line, ":", parts: 2, trim: true)
-    [key, params] = retrieve_params(key)
+    {key, value, params} =
+      case String.split(line, ":", parts: 2, trim: true) do
+        [key, value] ->
+          [key, params] = retrieve_params(key)
+          {key, value, params}
+
+        [key] ->
+          {key, nil, %{}}
+      end
 
     %Property{key: String.upcase(key), value: value, params: params}
   end
@@ -52,6 +59,8 @@ defmodule ICalendar.Util.Deserialize do
 
     [key, params]
   end
+
+  def parse_attr(%Property{key: _, value: nil}, acc), do: acc
 
   def parse_attr(
         %Property{key: "DESCRIPTION", value: description},
@@ -126,6 +135,42 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr(
+        %Property{key: "UID", value: uid},
+        acc
+      ) do
+    %{acc | uid: uid}
+  end
+
+  def parse_attr(
+        %Property{key: "LAST-MODIFIED", value: modified},
+        acc
+      ) do
+    {:ok, timestamp} = to_date(modified)
+    %{acc | modified: timestamp}
+  end
+
+  def parse_attr(
+        %Property{key: "ORGANIZER", params: _params, value: organizer},
+        acc
+      ) do
+    %{acc | organizer: organizer}
+  end
+
+  def parse_attr(
+        %Property{key: "ATTENDEE", params: params, value: value},
+        acc
+      ) do
+    %{acc | attendees: [Map.put(params, :original_value, value)] ++ acc.attendees}
+  end
+
+  def parse_attr(
+        %Property{key: "SEQUENCE", value: sequence},
+        acc
+      ) do
+    %{acc | sequence: sequence}
+  end
+
+  def parse_attr(
         %Property{key: "URL", value: url},
         acc
       ) do
@@ -162,6 +207,15 @@ defmodule ICalendar.Util.Deserialize do
       [{{1998, 1, 19}, {2, 0, 0}}, "America/Chicago"]
   """
   def to_date(date_string, %{"TZID" => timezone}) do
+    # Microsoft Outlook calendar .ICS files report times in Greenwich Standard Time (UTC +0)
+    # so just convert this to UTC
+    timezone =
+      if Regex.match?(~r/\//, timezone) do
+        timezone
+      else
+        Timex.Timezone.Utils.to_olson(timezone)
+      end
+
     date_string =
       case String.last(date_string) do
         "Z" -> date_string
@@ -169,6 +223,10 @@ defmodule ICalendar.Util.Deserialize do
       end
 
     Timex.parse(date_string <> timezone, "{YYYY}{0M}{0D}T{h24}{m}{s}Z{Zname}")
+  end
+
+  def to_date(date_string, %{"VALUE" => "DATE"}) do
+    to_date(date_string <> "T000000Z")
   end
 
   def to_date(date_string, %{}) do
