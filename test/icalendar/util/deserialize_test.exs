@@ -116,4 +116,16 @@ defmodule ICalendar.Util.DeserializeTest do
 
     assert %Event{} = event
   end
+
+  test "ignore empty param values" do
+    # the X-ADDRESS param is empty here
+    param = "X-APPLE-STRUCTURED-LOCATION;X-ADDRESS=;X-TITLE=Paris:geo:48.856788,2.351077"
+
+    params = Deserialize.retrieve_params(param)
+
+    assert params == [
+             "X-APPLE-STRUCTURED-LOCATION",
+             %{"X-TITLE" => "Paris:geo:48.856788,2.351077"}
+           ]
+  end
 end
