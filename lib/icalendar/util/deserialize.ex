@@ -31,9 +31,6 @@ defmodule ICalendar.Util.Deserialize do
           {key, nil, %{}}
       end
 
-    # [key, value] = String.split(line, ":", parts: 2, trim: true)
-    # [key, params] = retrieve_params(key)
-
     %Property{key: String.upcase(key), value: value, params: params}
   end
 
@@ -148,7 +145,8 @@ defmodule ICalendar.Util.Deserialize do
         %Property{key: "LAST-MODIFIED", value: modified},
         acc
       ) do
-    %{acc | modified: modified}
+    {:ok, timestamp} = to_date(modified)
+    %{acc | modified: timestamp}
   end
 
   def parse_attr(

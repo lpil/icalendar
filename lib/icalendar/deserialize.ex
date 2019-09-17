@@ -8,21 +8,11 @@ defimpl ICalendar.Deserialize, for: BitString do
   alias ICalendar.Util.Deserialize
 
   def from_ics(ics) do
-    events =
-      ics
-      |> String.trim()
-      |> String.split("\n")
-      |> Enum.map(&String.trim_trailing/1)
-      |> get_events()
-
-    # return single event if only one was found in ics file so the tests pass
-    case events do
-      [single_event] ->
-        single_event
-
-      multiple_events ->
-        multiple_events
-    end
+    ics
+    |> String.trim()
+    |> String.split("\n")
+    |> Enum.map(&String.trim_trailing/1)
+    |> get_events()
   end
 
   defp get_events(calendar_data, event_collector \\ [], temp_collector \\ [])

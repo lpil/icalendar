@@ -138,7 +138,7 @@ defmodule ICalendarTest do
       }
     ]
 
-    new_event =
+    [new_event] =
       %ICalendar{events: events}
       |> ICalendar.to_ics(vendor: @vendor)
       |> ICalendar.from_ics()
