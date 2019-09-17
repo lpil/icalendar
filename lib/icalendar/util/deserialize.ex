@@ -55,6 +55,7 @@ defmodule ICalendar.Util.Deserialize do
       |> Enum.reduce(%{}, fn param, acc ->
         case String.split(param, "=", parts: 2, trim: true) do
           [key, val] -> Map.merge(acc, %{key => val})
+          [key] -> Map.merge(acc, %{key => nil})
           _ -> acc
         end
       end)

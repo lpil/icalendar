@@ -125,7 +125,7 @@ defmodule ICalendar.Util.DeserializeTest do
 
     assert params == [
              "X-APPLE-STRUCTURED-LOCATION",
-             %{"X-TITLE" => "Paris:geo:48.856788,2.351077"}
+             %{"X-TITLE" => "Paris:geo:48.856788,2.351077", "X-ADDRESS" => nil}
            ]
   end
 end
