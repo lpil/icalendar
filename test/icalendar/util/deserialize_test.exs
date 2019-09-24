@@ -128,4 +128,12 @@ defmodule ICalendar.Util.DeserializeTest do
              %{"X-TITLE" => "Paris:geo:48.856788,2.351077", "X-ADDRESS" => nil}
            ]
   end
+
+  test "ignore empty lines" do
+    line = ""
+
+    kvs = Deserialize.retrieve_kvs(line)
+
+    assert kvs == nil
+  end
 end
