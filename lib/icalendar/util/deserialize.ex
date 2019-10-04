@@ -8,14 +8,9 @@ defmodule ICalendar.Util.Deserialize do
 
   def build_event(lines) when is_list(lines) do
     lines
+    |> Enum.filter(&(&1 != ""))
     |> Enum.map(&retrieve_kvs/1)
-    |> Enum.reduce(%Event{}, fn event_property, acc ->
-      unless is_nil(event_property) do
-        parse_attr(event_property, acc)
-      else
-        acc
-      end
-    end)
+    |> Enum.reduce(%Event{}, &parse_attr/2)
   end
 
   @doc ~S"""
@@ -27,7 +22,7 @@ defmodule ICalendar.Util.Deserialize do
   """
   def retrieve_kvs(line) do
     # Split Line up into key and value
-    property_result =
+    {key, value, params} =
       case String.split(line, ":", parts: 2, trim: true) do
         [key, value] ->
           [key, params] = retrieve_params(key)
@@ -35,18 +30,9 @@ defmodule ICalendar.Util.Deserialize do
 
         [key] ->
           {key, nil, %{}}
-
-        _ ->
-          nil
       end
 
-    case property_result do
-      {key, value, params} ->
-        %Property{key: String.upcase(key), value: value, params: params}
-
-      nil ->
-        nil
-    end
+    %Property{key: String.upcase(key), value: value, params: params}
   end
 
   @doc ~S"""
