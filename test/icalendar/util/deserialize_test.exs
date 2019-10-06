@@ -128,4 +128,35 @@ defmodule ICalendar.Util.DeserializeTest do
              %{"X-TITLE" => "Paris:geo:48.856788,2.351077", "X-ADDRESS" => nil}
            ]
   end
+
+  test "ignore empty lines" do
+    event =
+      """
+      BEGIN:VEVENT
+      DTSTART:20140522T150000Z
+      DTEND:20140522T160000Z
+      DESCRIPTION:Going to fly away
+      SUMMARY:Initial Review Meeting
+      BEGIN:VALARM
+      ACTION:NONE
+
+      TRIGGER;VALUE=DATE-TIME:19760401T005545Z
+
+      X-WR-ALARMUID:12D65D6D-D3B2-439D-87F1
+
+      UID:12D65D6D-D3B2-439D-87F1
+
+      ACKNOWLEDGED:20140522T145005Z
+
+      X-APPLE-DEFAULT-ALARM:TRUE
+
+      END:VALARM
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{} = event
+  end
 end

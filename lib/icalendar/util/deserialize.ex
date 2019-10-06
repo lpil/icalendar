@@ -8,6 +8,7 @@ defmodule ICalendar.Util.Deserialize do
 
   def build_event(lines) when is_list(lines) do
     lines
+    |> Enum.filter(&(&1 != ""))
     |> Enum.map(&retrieve_kvs/1)
     |> Enum.reduce(%Event{}, &parse_attr/2)
   end
