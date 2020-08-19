@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.3 - 2020-08-19
+
+- Calendars with empty lines in events are now parsed successfully.
+
 ## v1.0.2 - 2019-10-06
 
 - Calendars with empty lines are now parsed successfully.
