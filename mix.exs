@@ -1,7 +1,7 @@
 defmodule ICalendar.Mixfile do
   use Mix.Project
 
-  @version "1.0.1"
+  @version "1.0.3"
 
   def project do
     [
