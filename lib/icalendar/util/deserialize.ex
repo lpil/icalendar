@@ -90,6 +90,23 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr(
+        %Property{key: "RRULE", value: value},
+        acc
+      ) do
+    # Value will have the format FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1
+    # Defined here: https://icalendar.org/iCalendar-RFC-5545/3-3-10-recurrence-rule.html
+
+    rrule =
+      String.split(value, ";", trim: true)
+      |> Enum.reduce(%{}, fn param, acc ->
+        [key, val] = String.split(param, "=", trim: true)
+        Map.merge(acc, %{key => val})
+      end)
+
+    %{acc | rrule: rrule}
+  end
+
+  def parse_attr(
         %Property{key: "SUMMARY", value: summary},
         acc
       ) do

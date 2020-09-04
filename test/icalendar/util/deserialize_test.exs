@@ -159,4 +159,20 @@ defmodule ICalendar.Util.DeserializeTest do
 
     assert %Event{} = event
   end
+
+  test "include RRULE in event" do
+    event =
+      """
+      BEGIN:VEVENT
+      DTSTART;TZID=America/Toronto:20200903T143000
+      DTEND;TZID=America/Toronto:20200903T153000
+      RRULE:FREQ=WEEKLY;BYDAY=TH
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{rrule: %{"BYDAY" => "TH", "FREQ" => "WEEKLY"}} = event
+  end
 end

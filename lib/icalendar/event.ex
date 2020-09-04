@@ -6,6 +6,7 @@ defmodule ICalendar.Event do
   defstruct summary: nil,
             dtstart: nil,
             dtend: nil,
+            rrule: nil,
             description: nil,
             location: nil,
             url: nil,
