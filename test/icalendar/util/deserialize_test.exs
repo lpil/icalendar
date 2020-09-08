@@ -164,8 +164,6 @@ defmodule ICalendar.Util.DeserializeTest do
     event =
       """
       BEGIN:VEVENT
-      DTSTART;TZID=America/Toronto:20200903T143000
-      DTEND;TZID=America/Toronto:20200903T153000
       RRULE:FREQ=WEEKLY;BYDAY=TH
       END:VEVENT
       """
@@ -173,6 +171,42 @@ defmodule ICalendar.Util.DeserializeTest do
       |> String.split("\n")
       |> Deserialize.build_event()
 
-    assert %Event{rrule: %{"BYDAY" => "TH", "FREQ" => "WEEKLY"}} = event
+    assert %Event{rrule: %{byday: "TH", freq: "WEEKLY"}} = event
+  end
+
+  test "include weekly RRULE in event" do
+    event =
+      """
+      BEGIN:VEVENT
+      RRULE:FREQ=WEEKLY;BYDAY=TH
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{rrule: %{byday: "TH", freq: "WEEKLY"}} = event
+  end
+
+  test "include interval RRULE in event" do
+    event =
+      """
+      BEGIN:VEVENT
+      RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201204T045959Z;INTERVAL=2;BYDAY=TH,WE;BYSETPOS=-1
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{
+             rrule: %{
+               byday: ["TH", "WE"],
+               freq: "WEEKLY",
+               bysetpos: [-1],
+               interval: 2,
+               until: ~U[2020-12-04 04:59:59Z]
+             }
+           } = event
   end
 end
