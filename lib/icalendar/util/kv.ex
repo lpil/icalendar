@@ -52,6 +52,35 @@ defmodule ICalendar.Util.KV do
     "#{key}:#{lat};#{lon}\n"
   end
 
+  def build("RRULE", rrules) when is_map(rrules) do
+    # FREQ rule part MUST be the first rule part specified in a RECUR value.
+    freq = rrules.freq
+
+    rrule_tail_part =
+      rrules
+      |> Map.delete(:freq)
+      |> Enum.map(fn {key, value} ->
+        value =
+          case {key, value} do
+            {:until, value} ->
+              Value.to_ics(value)
+
+            {_key, values} when is_list(values) ->
+              Enum.join(values, ",")
+
+            {_key, value} ->
+              # All other values can simply be interpolated
+              value
+          end
+
+        key = key |> Atom.to_string() |> String.upcase()
+        ";#{key}=#{value}"
+      end)
+      |> Enum.join("")
+
+    "RRULE:FREQ=#{freq}#{rrule_tail_part}\n"
+  end
+
   def build("ATTENDEES", attendees) do
     Enum.map(attendees, fn attendee ->
       params =

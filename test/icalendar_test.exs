@@ -126,6 +126,41 @@ defmodule ICalendarTest do
            """
   end
 
+  test "Icalender.to_ics/1 with rrule and exdates" do
+    events = [
+      %ICalendar.Event{
+        rrule: %{
+          byday: ["TH", "WE"],
+          freq: "WEEKLY",
+          bysetpos: [-1],
+          interval: -2,
+          until: ~U[2020-12-04 04:59:59Z]
+        },
+        exdates: [
+          Timex.Timezone.convert(~U[2020-09-16 18:30:00Z], "America/Toronto"),
+          Timex.Timezone.convert(~U[2020-09-17 18:30:00Z], "America/Toronto")
+        ]
+      }
+    ]
+
+    ics =
+      %ICalendar{events: events}
+      |> ICalendar.to_ics()
+
+    assert ics == """
+           BEGIN:VCALENDAR
+           CALSCALE:GREGORIAN
+           VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
+           BEGIN:VEVENT
+           EXDATE;TZID=America/Toronto:20200916T143000
+           EXDATE;TZID=America/Toronto:20200917T143000
+           RRULE:FREQ=WEEKLY;BYDAY=TH,WE;BYSETPOS=-1;INTERVAL=-2;UNTIL=20201204T045959
+           END:VEVENT
+           END:VCALENDAR
+           """
+  end
+
   test "ICalender.to_ics/1 -> ICalendar.from_ics/1 and back again" do
     events = [
       %ICalendar.Event{
