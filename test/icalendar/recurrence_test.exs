@@ -116,32 +116,47 @@ defmodule ICalendar.RecurrenceTest do
       CALSCALE:GREGORIAN
       VERSION:2.0
       BEGIN:VEVENT
-      DTSTART:20200903T083000Z
+      DTSTART:20200903T143000Z
       DTEND:20200903T153000Z
-      RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201204T045959Z;INTERVAL=2;BYDAY=TH,WE
-      EXDATE:20200917T083000Z
-      EXDATE:20200916T083000Z
+      RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201028T045959Z;INTERVAL=2;BYDAY=TH,WE
+      EXDATE:20200917T143000Z
+      EXDATE:20200916T143000Z
       SUMMARY:work!
       END:VEVENT
       END:VCALENDAR
       """
       |> ICalendar.from_ics()
-      |> IO.inspect()
       |> ICalendar.Recurrence.add_recurring_events()
 
-    assert events |> Enum.count() == 6
+    assert events |> Enum.count() == 5
 
     [event | events] = events
-    assert event.dtstart == ~U[2020-09-03 08:30:00Z]
+    assert event.dtstart == ~U[2020-09-03 14:30:00Z]
     [event | events] = events
-    assert event.dtstart == ~U[2020-10-01 08:30:00Z]
+    assert event.dtstart == ~U[2020-09-30 14:30:00Z]
     [event | events] = events
-    assert event.dtstart == ~U[2020-10-15 08:30:00Z]
+    assert event.dtstart == ~U[2020-10-01 14:30:00Z]
     [event | events] = events
-    assert event.dtstart == ~U[2020-10-29 08:30:00Z]
-    [event | events] = events
-    assert event.dtstart == ~U[2020-11-12 08:30:00Z]
+    assert event.dtstart == ~U[2020-10-14 14:30:00Z]
     [event] = events
-    assert event.dtstart == ~U[2020-11-26 08:30:00Z]
+    assert event.dtstart == ~U[2020-10-15 14:30:00Z]
+  end
+
+  test "reccuring event with invalid bydate raises error" do
+    events =
+      """
+      BEGIN:VCALENDAR
+      CALSCALE:GREGORIAN
+      VERSION:2.0
+      BEGIN:VEVENT
+      RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201204T045959Z;INTERVAL=2;BYDAY=INVALID
+      END:VEVENT
+      END:VCALENDAR
+      """
+      |> ICalendar.from_ics()
+
+    assert_raise ICalendar.Recurrence.RecurrenceError, "Invalid rrule byday value: INVALID", fn ->
+      ICalendar.Recurrence.add_recurring_events(events)
+    end
   end
 end

@@ -331,7 +331,14 @@ defmodule ICalendar.Util.Deserialize do
           hash |> Map.put(:bysetpos, Enum.map(String.split(value, ","), &String.to_integer(&1)))
 
         :wkst ->
-          hash |> Map.put(:byday, value)
+          wkst =
+            if value in ["SU", "MO", "TU", "WE", "TH", "FR", "SA"] do
+              value |> String.downcase() |> String.to_atom()
+            else
+              nil
+            end
+
+          hash |> Map.put(:wkst, wkst)
 
         _ ->
           hash
