@@ -96,61 +96,18 @@ defmodule ICalendar.Util.Deserialize do
     # Value will have the format FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1
     # Defined here: https://icalendar.org/iCalendar-RFC-5545/3-3-10-recurrence-rule.html
 
-    rrule =
-      rrule
-      |> String.split(";")
-      |> Enum.reduce(%{}, fn rule, hash ->
-        [key, value] = rule |> String.split("=")
-
-        case key |> String.downcase() |> String.to_atom() do
-          :freq ->
-            hash |> Map.put(:freq, value)
-
-          :until ->
-            hash |> Map.put(:until, ICalendar.Util.DateParser.parse(value))
-
-          :count ->
-            hash |> Map.put(:count, String.to_integer(value))
-
-          :interval ->
-            hash |> Map.put(:interval, String.to_integer(value))
-
-          :bysecond ->
-            hash |> Map.put(:bysecond, String.split(value, ","))
-
-          :byminute ->
-            hash |> Map.put(:byminute, String.split(value, ","))
-
-          :byhour ->
-            hash |> Map.put(:byhour, String.split(value, ","))
-
-          :byday ->
-            hash |> Map.put(:byday, String.split(value, ","))
-
-          :bymonthday ->
-            hash |> Map.put(:bymonthday, String.split(value, ","))
-
-          :byyearday ->
-            hash |> Map.put(:byyearday, String.split(value, ","))
-
-          :byweekno ->
-            hash |> Map.put(:byweekno, String.split(value, ","))
-
-          :bymonth ->
-            hash |> Map.put(:bymonth, String.split(value, ","))
-
-          :bysetpos ->
-            hash |> Map.put(:bysetpos, Enum.map(String.split(value, ","), &String.to_integer(&1)))
-
-          :wkst ->
-            hash |> Map.put(:byday, value)
-
-          _ ->
-            hash
-        end
-      end)
+    rrule = parse_rrule(rrule)
 
     %{acc | rrule: rrule}
+  end
+
+  def parse_attr(
+        %Property{key: "EXDATE", value: exdate, params: params},
+        acc
+      ) do
+    exdates = Map.get(acc, :exdates, [])
+    {:ok, timestamp} = to_date(exdate, params)
+    %{acc | exdates: [timestamp | exdates]}
   end
 
   def parse_attr(
@@ -325,5 +282,60 @@ defmodule ICalendar.Util.Deserialize do
   def desanitized(string) do
     string
     |> String.replace(~s(\\), "")
+  end
+
+  def parse_rrule(rrule) do
+    rrule
+    |> String.split(";")
+    |> Enum.reduce(%{}, fn rule, hash ->
+      [key, value] = rule |> String.split("=")
+
+      case key |> String.downcase() |> String.to_atom() do
+        :freq ->
+          hash |> Map.put(:freq, value)
+
+        :until ->
+          hash |> Map.put(:until, ICalendar.Util.DateParser.parse(value))
+
+        :count ->
+          hash |> Map.put(:count, String.to_integer(value))
+
+        :interval ->
+          hash |> Map.put(:interval, String.to_integer(value))
+
+        :bysecond ->
+          hash |> Map.put(:bysecond, String.split(value, ","))
+
+        :byminute ->
+          hash |> Map.put(:byminute, String.split(value, ","))
+
+        :byhour ->
+          hash |> Map.put(:byhour, String.split(value, ","))
+
+        :byday ->
+          hash |> Map.put(:byday, String.split(value, ","))
+
+        :bymonthday ->
+          hash |> Map.put(:bymonthday, String.split(value, ","))
+
+        :byyearday ->
+          hash |> Map.put(:byyearday, String.split(value, ","))
+
+        :byweekno ->
+          hash |> Map.put(:byweekno, String.split(value, ","))
+
+        :bymonth ->
+          hash |> Map.put(:bymonth, String.split(value, ","))
+
+        :bysetpos ->
+          hash |> Map.put(:bysetpos, Enum.map(String.split(value, ","), &String.to_integer(&1)))
+
+        :wkst ->
+          hash |> Map.put(:byday, value)
+
+        _ ->
+          hash
+      end
+    end)
   end
 end

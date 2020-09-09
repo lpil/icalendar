@@ -7,6 +7,7 @@ defmodule ICalendar.Event do
             dtstart: nil,
             dtend: nil,
             rrule: nil,
+            exdates: [],
             description: nil,
             location: nil,
             url: nil,
@@ -39,8 +40,20 @@ defimpl ICalendar.Serialize, for: ICalendar.Event do
     event
     |> Map.from_struct()
     |> Enum.map(&to_kv/1)
+    |> List.flatten()
     |> Enum.sort()
     |> Enum.join()
+  end
+
+  defp to_kv({:exdates, value}) when is_list(value) do
+    case value do
+      [] ->
+        ""
+
+      exdates ->
+        exdates
+        |> Enum.map(&KV.build("EXDATE", &1))
+    end
   end
 
   defp to_kv({key, value}) do
