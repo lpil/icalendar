@@ -49,82 +49,89 @@ defmodule ICalendar.Recurrence do
     events ++
       (events
        |> Enum.reduce([], fn event, revents ->
-         case event.rrule do
-           nil ->
-             revents
+         new_events =
+           case event.rrule do
+             nil ->
+               nil
 
-           %{freq: "DAILY", count: count, interval: interval} ->
-             revents ++ (event |> add_recurring_events_count(count, days: interval))
+             %{freq: "DAILY", count: count, interval: interval} ->
+               event |> add_recurring_events_count(count, days: interval)
 
-           %{freq: "DAILY", until: until, interval: interval} ->
-             revents ++ (event |> add_recurring_events_until(until, days: interval))
+             %{freq: "DAILY", until: until, interval: interval} ->
+               event |> add_recurring_events_until(until, days: interval)
 
-           %{freq: "DAILY", count: count} ->
-             revents ++ (event |> add_recurring_events_count(count, days: 1))
+             %{freq: "DAILY", count: count} ->
+               event |> add_recurring_events_count(count, days: 1)
 
-           %{freq: "DAILY", until: until} ->
-             revents ++ (event |> add_recurring_events_until(until, days: 1))
+             %{freq: "DAILY", until: until} ->
+               event |> add_recurring_events_until(until, days: 1)
 
-           %{freq: "DAILY", interval: interval} ->
-             revents ++ (event |> add_recurring_events_until(end_date, days: interval))
+             %{freq: "DAILY", interval: interval} ->
+               event |> add_recurring_events_until(end_date, days: interval)
 
-           %{freq: "DAILY"} ->
-             revents ++ (event |> add_recurring_events_until(end_date, days: 1))
+             %{freq: "DAILY"} ->
+               event |> add_recurring_events_until(end_date, days: 1)
 
-           %{freq: "WEEKLY", count: count, interval: interval} ->
-             revents ++ (event |> add_recurring_events_count(count, days: interval * 7))
+             %{freq: "WEEKLY", count: count, interval: interval} ->
+               event |> add_recurring_events_count(count, days: interval * 7)
 
-           %{freq: "WEEKLY", until: until, interval: interval} ->
-             revents ++ (event |> add_recurring_events_until(until, days: interval * 7))
+             %{freq: "WEEKLY", until: until, interval: interval} ->
+               event |> add_recurring_events_until(until, days: interval * 7)
 
-           %{freq: "WEEKLY", count: count} ->
-             revents ++ (event |> add_recurring_events_count(count, days: 7))
+             %{freq: "WEEKLY", count: count} ->
+               event |> add_recurring_events_count(count, days: 7)
 
-           %{freq: "WEEKLY", until: until} ->
-             revents ++ (event |> add_recurring_events_until(until, days: 7))
+             %{freq: "WEEKLY", until: until} ->
+               event |> add_recurring_events_until(until, days: 7)
 
-           %{freq: "WEEKLY", interval: interval} ->
-             revents ++ (event |> add_recurring_events_until(end_date, days: interval * 7))
+             %{freq: "WEEKLY", interval: interval} ->
+               event |> add_recurring_events_until(end_date, days: interval * 7)
 
-           %{freq: "WEEKLY"} ->
-             revents ++ (event |> add_recurring_events_until(end_date, days: 7))
+             %{freq: "WEEKLY"} ->
+               event |> add_recurring_events_until(end_date, days: 7)
 
-           %{freq: "MONTHLY", count: count, interval: interval} ->
-             revents ++ (event |> add_recurring_events_count(count, months: interval))
+             %{freq: "MONTHLY", count: count, interval: interval} ->
+               event |> add_recurring_events_count(count, months: interval)
 
-           %{freq: "MONTHLY", until: until, interval: interval} ->
-             revents ++ (event |> add_recurring_events_until(until, months: interval))
+             %{freq: "MONTHLY", until: until, interval: interval} ->
+               event |> add_recurring_events_until(until, months: interval)
 
-           %{freq: "MONTHLY", count: count} ->
-             revents ++ (event |> add_recurring_events_count(count, months: 1))
+             %{freq: "MONTHLY", count: count} ->
+               event |> add_recurring_events_count(count, months: 1)
 
-           %{freq: "MONTHLY", until: until} ->
-             revents ++ (event |> add_recurring_events_until(until, months: 1))
+             %{freq: "MONTHLY", until: until} ->
+               event |> add_recurring_events_until(until, months: 1)
 
-           %{freq: "MONTHLY", interval: interval} ->
-             revents ++ (event |> add_recurring_events_until(end_date, months: interval))
+             %{freq: "MONTHLY", interval: interval} ->
+               event |> add_recurring_events_until(end_date, months: interval)
 
-           %{freq: "MONTHLY"} ->
-             revents ++ (event |> add_recurring_events_until(end_date, months: 1))
+             %{freq: "MONTHLY"} ->
+               event |> add_recurring_events_until(end_date, months: 1)
 
-           %{freq: "YEARLY", count: count, interval: interval} ->
-             revents ++ (event |> add_recurring_events_count(count, years: interval))
+             %{freq: "YEARLY", count: count, interval: interval} ->
+               event |> add_recurring_events_count(count, years: interval)
 
-           %{freq: "YEARLY", until: until, interval: interval} ->
-             revents ++ (event |> add_recurring_events_until(until, years: interval))
+             %{freq: "YEARLY", until: until, interval: interval} ->
+               event |> add_recurring_events_until(until, years: interval)
 
-           %{freq: "YEARLY", count: count} ->
-             revents ++ (event |> add_recurring_events_count(count, years: 1))
+             %{freq: "YEARLY", count: count} ->
+               event |> add_recurring_events_count(count, years: 1)
 
-           %{freq: "YEARLY", until: until} ->
-             revents ++ (event |> add_recurring_events_until(until, years: 1))
+             %{freq: "YEARLY", until: until} ->
+               event |> add_recurring_events_until(until, years: 1)
 
-           %{freq: "YEARLY", interval: interval} ->
-             revents ++ (event |> add_recurring_events_until(end_date, years: interval))
+             %{freq: "YEARLY", interval: interval} ->
+               event |> add_recurring_events_until(end_date, years: interval)
 
-           %{freq: "YEARLY"} ->
-             revents ++ (event |> add_recurring_events_until(end_date, years: 1))
-         end
+             %{freq: "YEARLY"} ->
+               event |> add_recurring_events_until(end_date, years: 1)
+           end
+           |> Enum.filter(fn new_event ->
+             # Make sure new event doesn't fall on an EXDATE
+             not is_nil(new_event) and new_event.dtstart not in event.exdates
+           end)
+
+         revents ++ new_events
        end))
   end
 
