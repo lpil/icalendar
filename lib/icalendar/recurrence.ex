@@ -9,8 +9,8 @@ defmodule ICalendar.Recurrence do
 
   alias ICalendar.Event
 
-  # ignore :bysecond, :minute for now
-  @by_x_rrules [:byhour, :byday, :monthday, :byyearday, :byweekno, :bymonth]
+  # ignore :byhour, :monthday, :byyearday, :byweekno, :bymonth for now
+  @supported_by_x_rrules [:byday]
 
   @doc """
   Add recurring events to events list
@@ -35,9 +35,16 @@ defmodule ICalendar.Recurrence do
       option, an event could recur every 5 days or every 3 weeks.
     - `until` *(optional)*: Represents the end date for a recurring event.
       This takes precedence over the `end_date` parameter.
+    - `byday` *(optional)*: Represents the days of the week at which events occur.
     The `freq` option is required for a valid rrule, but the others are
     optional. They may be used either individually (ex. just `freq`) or in
     concert (ex. `freq` + `interval` + `until`).
+  ## Future rrule options (not yet supported)
+    - `byhour` *(optional)*: Represents the hours of the day at which events occur.
+    - `byweekno` *(optional)*: Represents the week number at which events occur.
+    - `bymonthday` *(optional)*: Represents the days of the month at which events occur.
+    - `bymonth` *(optional)*: Represents the months at which events occur.
+    - `byyearday` *(optional)*: Represents the days of the year at which events occur.
   ## Examples
       iex> dt = Timex.Date.from({2016,8,13})
       iex> dt_end = Timex.Date.from({2016, 8, 23})
@@ -52,7 +59,8 @@ defmodule ICalendar.Recurrence do
     event_recurrences =
       events
       |> Enum.reduce([], fn event, revents ->
-        by_x_rrules = if is_map(event.rrule), do: Map.take(event.rrule, @by_x_rrules), else: %{}
+        by_x_rrules =
+          if is_map(event.rrule), do: Map.take(event.rrule, @supported_by_x_rrules), else: %{}
 
         reference_events =
           if by_x_rrules != %{} do
@@ -207,7 +215,10 @@ defmodule ICalendar.Recurrence do
   @valid_days ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
   @day_values %{su: 0, mo: 1, tu: 2, we: 3, th: 4, fr: 5, sa: 6}
 
-  defp build_refernce_events_by_x_rule(%Event{rrule: %{byday: bydays}} = event, :byday) do
+  defp build_refernce_events_by_x_rule(
+         %Event{rrule: %{byday: bydays}} = event,
+         :byday
+       ) do
     bydays
     |> Enum.map(fn byday ->
       if byday in @valid_days do
