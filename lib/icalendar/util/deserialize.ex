@@ -284,6 +284,23 @@ defmodule ICalendar.Util.Deserialize do
     |> String.replace(~s(\\), "")
   end
 
+  @doc """
+  This function builds an rrule struct.
+
+  RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201204T045959Z;INTERVAL=2;BYDAY=TH,WE;BYSETPOS=-1
+
+  will get turned into:
+
+  ```elixir
+  %{
+    byday: ["TH", "WE"],
+    freq: "WEEKLY",
+    bysetpos: [-1],
+    interval: 2,
+    until: ~U[2020-12-04 04:59:59Z]
+  }
+  ```
+  """
   def parse_rrule(rrule) do
     rrule
     |> String.split(";")

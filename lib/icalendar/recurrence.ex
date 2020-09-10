@@ -12,8 +12,6 @@ defmodule ICalendar.Recurrence do
   # ignore :bysecond, :minute for now
   @by_x_rrules [:byhour, :byday, :monthday, :byyearday, :byweekno, :bymonth]
 
-  @day_values %{su: 0, mo: 1, tu: 2, we: 3, th: 4, fr: 5, sa: 6}
-
   @doc """
   Add recurring events to events list
   ## Parameters
@@ -54,35 +52,13 @@ defmodule ICalendar.Recurrence do
     event_recurrences =
       events
       |> Enum.reduce([], fn event, revents ->
+        by_x_rrules = if is_map(event.rrule), do: Map.take(event.rrule, @by_x_rrules), else: %{}
+
         reference_events =
-          if is_map(event.rrule) && Map.take(event.rrule, @by_x_rrules) != %{} do
-            # If there are any by_x modifiers in the rrule, handle them
-            case event.rrule do
-              %{byday: bydays} ->
-                bydays
-                |> Enum.map(fn byday ->
-                  day_atom = byday |> String.downcase() |> String.to_atom()
-
-                  event_day_of_week_number = Map.get(@day_values, day_atom)
-
-                  if is_nil(event_day_of_week_number),
-                    do:
-                      raise(
-                        ICalendar.Recurrence.RecurrenceError,
-                        "Invalid rrule byday value: #{byday}"
-                      )
-
-                  # determine the difference between the byday and the event's dtstart
-                  day_offset_for_reference =
-                    event_day_of_week_number - Timex.weekday(event.dtstart)
-
-                  #  Remove the invalid reference events later on
-                  Map.merge(event, %{
-                    dtstart: Timex.shift(event.dtstart, days: day_offset_for_reference),
-                    dtend: Timex.shift(event.dtend, days: day_offset_for_reference)
-                  })
-                end)
-            end
+          if by_x_rrules != %{} do
+            # If there are any by_x modifiers in the rrule, build reference events based on them
+            # Remove the invalid reference events later on
+            build_refernce_events_by_x_rules(event, by_x_rrules)
           else
             [event]
           end
@@ -219,7 +195,36 @@ defmodule ICalendar.Recurrence do
     end
   end
 
-  defmodule RecurrenceError do
-    defexception message: "An error occurred while building event recurrences"
+  defp build_refernce_events_by_x_rules(%Event{} = event, by_x_rrules) when is_map(by_x_rrules) do
+    by_x_rrules
+    |> Map.keys()
+    |> Enum.map(fn by_x ->
+      build_refernce_events_by_x_rule(event, by_x)
+    end)
+    |> List.flatten()
+  end
+
+  @valid_days ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
+  @day_values %{su: 0, mo: 1, tu: 2, we: 3, th: 4, fr: 5, sa: 6}
+
+  defp build_refernce_events_by_x_rule(%Event{rrule: %{byday: bydays}} = event, :byday) do
+    bydays
+    |> Enum.map(fn byday ->
+      if byday in @valid_days do
+        day_atom = byday |> String.downcase() |> String.to_atom()
+
+        # determine the difference between the byday and the event's dtstart
+        day_offset_for_reference = Map.get(@day_values, day_atom) - Timex.weekday(event.dtstart)
+
+        Map.merge(event, %{
+          dtstart: Timex.shift(event.dtstart, days: day_offset_for_reference),
+          dtend: Timex.shift(event.dtend, days: day_offset_for_reference)
+        })
+      else
+        # Ignore the invalid byday value
+        nil
+      end
+    end)
+    |> Enum.filter(&(!is_nil(&1)))
   end
 end

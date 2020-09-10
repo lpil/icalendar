@@ -109,7 +109,7 @@ defmodule ICalendar.RecurrenceTest do
     assert event.dtstart == ~U[2016-01-28 08:30:00Z]
   end
 
-  test "exdates not included in reccuring event with until" do
+  test "exdates not included in reccuring event with until and byday, ignoring invalid byday value" do
     events =
       """
       BEGIN:VCALENDAR
@@ -118,7 +118,7 @@ defmodule ICalendar.RecurrenceTest do
       BEGIN:VEVENT
       DTSTART:20200903T143000Z
       DTEND:20200903T153000Z
-      RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201028T045959Z;INTERVAL=2;BYDAY=TH,WE
+      RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201028T045959Z;INTERVAL=2;BYDAY=TH,WE,AD
       EXDATE:20200917T143000Z
       EXDATE:20200916T143000Z
       SUMMARY:work!
@@ -140,23 +140,5 @@ defmodule ICalendar.RecurrenceTest do
     assert event.dtstart == ~U[2020-10-14 14:30:00Z]
     [event] = events
     assert event.dtstart == ~U[2020-10-15 14:30:00Z]
-  end
-
-  test "reccuring event with invalid bydate raises error" do
-    events =
-      """
-      BEGIN:VCALENDAR
-      CALSCALE:GREGORIAN
-      VERSION:2.0
-      BEGIN:VEVENT
-      RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201204T045959Z;INTERVAL=2;BYDAY=INVALID
-      END:VEVENT
-      END:VCALENDAR
-      """
-      |> ICalendar.from_ics()
-
-    assert_raise ICalendar.Recurrence.RecurrenceError, "Invalid rrule byday value: INVALID", fn ->
-      ICalendar.Recurrence.add_recurring_events(events)
-    end
   end
 end
