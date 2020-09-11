@@ -75,7 +75,7 @@ defmodule ICalendar.Recurrence do
           new_events =
             case event.rrule do
               nil ->
-                nil
+                []
 
               %{freq: "DAILY", count: count, interval: interval} ->
                 reference_event |> add_recurring_events_count(count, days: interval)
@@ -187,10 +187,11 @@ defmodule ICalendar.Recurrence do
   end
 
   defp shift_event(event, shift_opts) do
-    new_event = event
-    new_event = %{new_event | dtstart: shift_date(event.dtstart, shift_opts)}
-    new_event = %{new_event | dtend: shift_date(event.dtend, shift_opts)}
-    new_event
+    Map.merge(event, %{
+      dtstart: shift_date(event.dtstart, shift_opts),
+      dtend: shift_date(event.dtend, shift_opts),
+      rrule: Map.put(event.rrule, :is_recurrence, true)
+    })
   end
 
   defp shift_date(date, shift_opts) do
