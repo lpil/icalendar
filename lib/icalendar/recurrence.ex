@@ -204,7 +204,7 @@ defmodule ICalendar.Recurrence do
     end
   end
 
-  defp build_refernce_events_by_x_rules(%Event{} = event, by_x_rrules) when is_map(by_x_rrules) do
+  defp build_refernce_events_by_x_rules(event, by_x_rrules) do
     by_x_rrules
     |> Map.keys()
     |> Enum.map(fn by_x ->
