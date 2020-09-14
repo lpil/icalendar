@@ -217,7 +217,7 @@ defmodule ICalendar.Recurrence do
   @day_values %{su: 0, mo: 1, tu: 2, we: 3, th: 4, fr: 5, sa: 6}
 
   defp build_refernce_events_by_x_rule(
-         %Event{rrule: %{byday: bydays}} = event,
+         %{rrule: %{byday: bydays}} = event,
          :byday
        ) do
     bydays
