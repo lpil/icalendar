@@ -13,7 +13,8 @@ defmodule ICalendar.Recurrence do
   @supported_by_x_rrules [:byday]
 
   @doc """
-  Add recurring events to events list
+  Add recurring events to events list. Warning: this may create a very large
+  sequence of event recurrences.
   ## Parameters
     - `events`: List of events that each may contain an rrule. See `ICalendar.Event`.
     - `end_date` *(optional)*: A date time that represents the fallback end date
@@ -71,7 +72,7 @@ defmodule ICalendar.Recurrence do
             [event]
           end
 
-        Enum.map(reference_events, fn reference_event ->
+        Stream.map(reference_events, fn reference_event ->
           new_events =
             case event.rrule do
               nil ->
@@ -159,6 +160,7 @@ defmodule ICalendar.Recurrence do
 
           revents ++ new_events
         end)
+        |> Enum.to_list()
         |> List.flatten()
       end)
       |> Enum.sort_by(& &1.dtstart, {:asc, DateTime})
