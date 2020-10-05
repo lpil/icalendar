@@ -17,7 +17,14 @@ defmodule ICalendar.RecurrenceTest do
       END:VCALENDAR
       """
       |> ICalendar.from_ics()
-      |> ICalendar.Recurrence.add_recurring_events()
+      |> Enum.map(fn event ->
+        recurrences =
+          ICalendar.Recurrence.get_recurrences(event)
+          |> Enum.to_list()
+
+        [event | recurrences]
+      end)
+      |> List.flatten()
 
     assert events |> Enum.count() == 8
 
@@ -39,6 +46,39 @@ defmodule ICalendar.RecurrenceTest do
     assert event.dtstart == ~U[2015-12-31 08:30:00Z]
   end
 
+  test "daily reccuring event with count" do
+    events =
+      """
+      BEGIN:VCALENDAR
+      CALSCALE:GREGORIAN
+      VERSION:2.0
+      BEGIN:VEVENT
+      RRULE:FREQ=DAILY;COUNT=3
+      DESCRIPTION:Let's go see Star Wars.
+      DTEND:20151224T084500Z
+      DTSTART:20151224T083000Z
+      SUMMARY:Film with Amy and Adam
+      END:VEVENT
+      END:VCALENDAR
+      """
+      |> ICalendar.from_ics()
+      |> Enum.map(fn event ->
+        recurrences =
+          ICalendar.Recurrence.get_recurrences(event)
+          |> Enum.to_list()
+
+        [event | recurrences]
+      end)
+      |> List.flatten()
+
+    assert events |> Enum.count() == 3
+
+    [event | events] = events
+    assert event.dtstart == ~U[2015-12-24 08:30:00Z]
+    [event | _events] = events
+    assert event.dtstart == ~U[2015-12-25 08:30:00Z]
+  end
+
   test "monthly reccuring event with until" do
     events =
       """
@@ -55,7 +95,14 @@ defmodule ICalendar.RecurrenceTest do
       END:VCALENDAR
       """
       |> ICalendar.from_ics()
-      |> ICalendar.Recurrence.add_recurring_events()
+      |> Enum.map(fn event ->
+        recurrences =
+          ICalendar.Recurrence.get_recurrences(event)
+          |> Enum.to_list()
+
+        [event | recurrences]
+      end)
+      |> List.flatten()
 
     assert events |> Enum.count() == 7
 
@@ -91,7 +138,14 @@ defmodule ICalendar.RecurrenceTest do
       END:VCALENDAR
       """
       |> ICalendar.from_ics()
-      |> ICalendar.Recurrence.add_recurring_events()
+      |> Enum.map(fn event ->
+        recurrences =
+          ICalendar.Recurrence.get_recurrences(event)
+          |> Enum.to_list()
+
+        [event | recurrences]
+      end)
+      |> List.flatten()
 
     assert events |> Enum.count() == 6
 
@@ -126,19 +180,26 @@ defmodule ICalendar.RecurrenceTest do
       END:VCALENDAR
       """
       |> ICalendar.from_ics()
-      |> ICalendar.Recurrence.add_recurring_events()
+      |> Enum.map(fn event ->
+        recurrences =
+          ICalendar.Recurrence.get_recurrences(event)
+          |> Enum.to_list()
+
+        [event | recurrences]
+      end)
+      |> List.flatten()
 
     assert events |> Enum.count() == 5
 
     [event | events] = events
     assert event.dtstart == ~U[2020-09-03 14:30:00Z]
     [event | events] = events
-    assert event.dtstart == ~U[2020-09-30 14:30:00Z]
-    [event | events] = events
     assert event.dtstart == ~U[2020-10-01 14:30:00Z]
     [event | events] = events
-    assert event.dtstart == ~U[2020-10-14 14:30:00Z]
-    [event] = events
+    assert event.dtstart == ~U[2020-09-30 14:30:00Z]
+    [event | events] = events
     assert event.dtstart == ~U[2020-10-15 14:30:00Z]
+    [event] = events
+    assert event.dtstart == ~U[2020-10-14 14:30:00Z]
   end
 end
