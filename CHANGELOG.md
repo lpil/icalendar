@@ -1,8 +1,9 @@
 # Changelog
 
-## v1.0.4 - 2020-09-04
+## v1.1.0 - 2020-10-06
 
-- include RRULE recurrence rule when parsing events.
+- The `ICalendar.Recurrence.get_recurrences` function has been added to enable
+  calculation of recurring events from RRULE.
 
 ## v1.0.3 - 2020-08-19
 
