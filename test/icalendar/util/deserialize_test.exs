@@ -159,4 +159,87 @@ defmodule ICalendar.Util.DeserializeTest do
 
     assert %Event{} = event
   end
+
+  test "include RRULE in event" do
+    event =
+      """
+      BEGIN:VEVENT
+      RRULE:FREQ=WEEKLY;BYDAY=TH
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{
+             rrule: %{
+               byday: ["TH"],
+               freq: "WEEKLY"
+             }
+           } = event
+  end
+
+  test "include weekly RRULE in event" do
+    event =
+      """
+      BEGIN:VEVENT
+      RRULE:FREQ=WEEKLY;BYDAY=TH
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{
+             rrule: %{
+               byday: ["TH"],
+               freq: "WEEKLY"
+             }
+           } = event
+  end
+
+  test "include interval RRULE in event" do
+    event =
+      """
+      BEGIN:VEVENT
+      RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20201204T045959Z;INTERVAL=2;BYDAY=TH,WE;BYSETPOS=-1
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    assert %Event{
+             rrule: %{
+               byday: ["TH", "WE"],
+               freq: "WEEKLY",
+               bysetpos: [-1],
+               interval: 2,
+               until: ~U[2020-12-04 04:59:59Z]
+             }
+           } = event
+  end
+
+  test "include EXDATE properties as list in event" do
+    event =
+      """
+      BEGIN:VEVENT
+      EXDATE;TZID=America/Toronto:20200917T143000
+      EXDATE;TZID=America/Toronto:20200916T143000
+      END:VEVENT
+      """
+      |> String.trim()
+      |> String.split("\n")
+      |> Deserialize.build_event()
+
+    dt1 = Timex.Timezone.convert(~U[2020-09-16 18:30:00Z], "America/Toronto")
+    dt2 = Timex.Timezone.convert(~U[2020-09-17 18:30:00Z], "America/Toronto")
+
+    assert %Event{
+             exdates: [
+               ^dt1,
+               ^dt2
+             ]
+           } = event
+  end
 end
