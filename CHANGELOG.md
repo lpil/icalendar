@@ -2,7 +2,7 @@
 
 ## v1.0.4 - 2020-09-04
 
-- inclue RRULE recurrence rule when parsing events.
+- include RRULE recurrence rule when parsing events.
 
 ## v1.0.3 - 2020-08-19
 
