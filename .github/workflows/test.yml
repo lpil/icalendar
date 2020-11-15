@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         run: mix deps.get
 
-      # - name: Check formatting
-      #   run: mix format --check-formatted
+      - name: Check formatting
+        run: mix format --check-formatted
 
       - name: Compile test env
         run: mix compile

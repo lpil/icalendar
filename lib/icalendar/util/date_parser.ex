@@ -49,15 +49,17 @@ defmodule ICalendar.Util.DateParser do
     the returned %DateTime{} will be in the local timezone.
   """
 
-  @type valid_timezone :: String.t | :utc | :local
+  @type valid_timezone :: String.t() | :utc | :local
 
-  @spec parse(String.t, valid_timezone | nil) :: %DateTime{}
+  @spec parse(String.t(), valid_timezone | nil) :: %DateTime{}
   def parse(data, tzid \\ nil)
 
   # Date Format: "19690620T201804Z", Timezone: *
-  def parse(<< year :: binary-size(4), month :: binary-size(2), day :: binary-size(2), "T",
-               hour :: binary-size(2), minutes :: binary-size(2), seconds :: binary-size(2), "Z" >>,
-               _timezone) do
+  def parse(
+        <<year::binary-size(4), month::binary-size(2), day::binary-size(2), "T",
+          hour::binary-size(2), minutes::binary-size(2), seconds::binary-size(2), "Z">>,
+        _timezone
+      ) do
     date = {year, month, day}
     time = {hour, minutes, seconds}
 
@@ -67,9 +69,11 @@ defmodule ICalendar.Util.DateParser do
   end
 
   # Date Format: "19690620T201804", Timezone: nil
-  def parse(<< year :: binary-size(4), month :: binary-size(2), day :: binary-size(2), "T",
-               hour :: binary-size(2), minutes :: binary-size(2), seconds :: binary-size(2) >>,
-               nil) do
+  def parse(
+        <<year::binary-size(4), month::binary-size(2), day::binary-size(2), "T",
+          hour::binary-size(2), minutes::binary-size(2), seconds::binary-size(2)>>,
+        nil
+      ) do
     date = {year, month, day}
     time = {hour, minutes, seconds}
 
@@ -79,9 +83,11 @@ defmodule ICalendar.Util.DateParser do
   end
 
   # Date Format: "19690620T201804", Timezone: *
-  def parse(<< year :: binary-size(4), month :: binary-size(2), day :: binary-size(2), "T",
-               hour :: binary-size(2), minutes :: binary-size(2), seconds :: binary-size(2) >>,
-               timezone) do
+  def parse(
+        <<year::binary-size(4), month::binary-size(2), day::binary-size(2), "T",
+          hour::binary-size(2), minutes::binary-size(2), seconds::binary-size(2)>>,
+        timezone
+      ) do
     date = {year, month, day}
     time = {hour, minutes, seconds}
 
@@ -90,18 +96,18 @@ defmodule ICalendar.Util.DateParser do
   end
 
   # Date Format: "19690620Z", Timezone: *
-  def parse(<< year :: binary-size(4), month :: binary-size(2), day :: binary-size(2), "Z" >>, _timezone) do
+  def parse(<<year::binary-size(4), month::binary-size(2), day::binary-size(2), "Z">>, _timezone) do
     {to_integers({year, month, day}), {0, 0, 0}}
     |> Timex.to_datetime()
   end
 
   # Date Format: "19690620", Timezone: *
-  def parse(<< year :: binary-size(4), month :: binary-size(2), day :: binary-size(2) >>, _timezone) do
+  def parse(<<year::binary-size(4), month::binary-size(2), day::binary-size(2)>>, _timezone) do
     {to_integers({year, month, day}), {0, 0, 0}}
     |> Timex.to_datetime()
   end
 
-  @spec to_integers({String.t, String.t, String.t}) :: {integer, integer, integer}
+  @spec to_integers({String.t(), String.t(), String.t()}) :: {integer, integer, integer}
   defp to_integers({str1, str2, str3}) do
     {
       String.to_integer(str1),
