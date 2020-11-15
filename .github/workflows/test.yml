@@ -1,0 +1,43 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  test:
+    name: Test
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-18.04]
+        elixir: [1.8.x, 1.9.x, 1.10.x, 1.11.x]
+        otp: [21.x, 22.x, 23.x]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup Elixir
+        uses: actions/setup-elixir@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      # - name: Check formatting
+      #   run: mix format --check-formatted
+
+      - name: Compile test env
+        run: mix compile
+        env:
+          MIX_ENV: test
+
+      - name: Run tests
+        run: mix test
