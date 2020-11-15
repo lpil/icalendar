@@ -175,10 +175,10 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr(
-        %Property{key: "ORGANIZER", params: _params, value: organizer},
+        %Property{key: "ORGANIZER", params: params, value: value},
         acc
       ) do
-    %{acc | organizer: organizer}
+    %{acc | organizer: Map.put(params, :original_value, value)}
   end
 
   def parse_attr(
