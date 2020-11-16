@@ -8,21 +8,34 @@ defmodule ICalendar.Util.KV do
   @doc ~S"""
   Convert a key and value to an iCal line:
 
-    iex> ICalendar.Util.KV.build("foo", "bar")
-    "foo:bar\n"
+      iex> ICalendar.Util.KV.build("foo", "bar")
+      "foo:bar\n"
 
   Don't add empty values:
 
-    iex> ICalendar.Util.KV.build("foo", nil)
-    ""
+      iex> ICalendar.Util.KV.build("foo", nil)
+      ""
 
   DateTime values will add timezones:
 
-    iex> date =
-    ...>   {{2015, 12, 24}, {8, 30, 0}}
-    ...>   |> Timex.to_datetime("America/Chicago")
-    ...> ICalendar.Util.KV.build("foo", date)
-    "foo;TZID=America/Chicago:20151224T083000\n"
+      iex> date =
+      ...>   {{2015, 12, 24}, {8, 30, 0}}
+      ...>   |> Timex.to_datetime("America/Chicago")
+      ...> ICalendar.Util.KV.build("foo", date)
+      "foo;TZID=America/Chicago:20151224T083000\n"
+
+  Attendees get their own line, each:
+
+        iex> attendees = [
+        ...>   %{"PARTSTAT" => "ACCEPTED", "CN" => "eric@clockk.com", original_value: "mailto:eric@clockk.com"},
+        ...>   %{"PARTSTAT" => "ACCEPTED", "CN" => "paul@clockk.com", original_value: "mailto:paul@clockk.com"},
+        ...>   %{"PARTSTAT" => "ACCEPTED", "CN" => "James SM", original_value: "mailto:james@clockk.com"},
+        ...> ]
+        iex> ICalendar.Util.KV.build("ATTENDEES", attendees)
+        "ATTENDEE;CN=eric@clockk.com;PARTSTAT=ACCEPTED:mailto:eric@clockk.com\n" <>
+          "ATTENDEE;CN=paul@clockk.com;PARTSTAT=ACCEPTED:mailto:paul@clockk.com\n" <>
+          "ATTENDEE;CN=James SM;PARTSTAT=ACCEPTED:mailto:james@clockk.com\n"
+
   """
   def build(_, nil) do
     ""
@@ -88,9 +101,9 @@ defmodule ICalendar.Util.KV do
           ";#{key}=#{val}"
         end
 
-      "ATTENDEE#{params}:#{attendee.original_value}"
+      "ATTENDEE#{params}:#{attendee.original_value}\n"
     end)
-    |> Enum.join("\n")
+    |> Enum.join("")
   end
 
   def build(key, date = %DateTime{time_zone: "Etc/UTC"}) do
