@@ -1,6 +1,6 @@
 # ICalendar
 
-[![Build Status](https://travis-ci.org/lpil/icalendar.svg?branch=master)](https://travis-ci.org/lpil/icalendar)
+![Test](https://github.com/lpil/icalendar/workflows/Test/badge.svg)
 
 A small library for reading and writing ICalendar files.
 
