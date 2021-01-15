@@ -8,6 +8,7 @@ defmodule ICalendar.Event do
             dtend: nil,
             rrule: nil,
             exdates: [],
+            dtstamp: nil,
             description: nil,
             location: nil,
             url: nil,

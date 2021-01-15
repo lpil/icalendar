@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add support for the `DTSTAMP` field.
+  If not provided, it is initialized to the current UTC DateTime when serializing.
+
 ## v1.1.0 - 2020-10-06
 
 - The `ICalendar.Recurrence.get_recurrences` function has been added to enable
