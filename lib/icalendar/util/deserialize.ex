@@ -102,12 +102,16 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr(
-        %Property{key: "EXDATE", value: exdate, params: params},
+        %Property{key: "EXDATE", value: new_exdates, params: params},
         acc
       ) do
     exdates = Map.get(acc, :exdates, [])
-    {:ok, timestamp} = to_date(exdate, params)
-    %{acc | exdates: [timestamp | exdates]}
+    new_dates = String.split(new_exdates, ",")
+    |> Enum.map(fn exdate ->
+      {:ok, timestamp} = to_date(exdate, params)
+      timestamp
+    end)
+    %{acc | exdates: Enum.concat(new_dates, exdates)}
   end
 
   def parse_attr(
