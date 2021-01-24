@@ -106,11 +106,14 @@ defmodule ICalendar.Util.Deserialize do
         acc
       ) do
     exdates = Map.get(acc, :exdates, [])
-    new_dates = String.split(new_exdates, ",")
-    |> Enum.map(fn exdate ->
-      {:ok, timestamp} = to_date(exdate, params)
-      timestamp
-    end)
+
+    new_dates =
+      String.split(new_exdates, ",")
+      |> Enum.map(fn exdate ->
+        {:ok, timestamp} = to_date(exdate, params)
+        timestamp
+      end)
+
     %{acc | exdates: Enum.concat(new_dates, exdates)}
   end
 
@@ -245,7 +248,8 @@ defmodule ICalendar.Util.Deserialize do
         try do
           Timex.Timezone.Utils.to_olson(timezone)
         rescue
-          _e -> nil # probably a custom timezone defined in this file
+          # probably a custom timezone defined in this file
+          _e -> nil
         end
       end || "UTC"
 

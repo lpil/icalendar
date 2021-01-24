@@ -48,5 +48,4 @@ defimpl ICalendar.Deserialize, for: BitString do
   end
 
   defp get_events([], event_collector, _temp_collector, _opts), do: event_collector
-
 end
