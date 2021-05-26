@@ -3,7 +3,9 @@ defprotocol ICalendar.Serialize do
   Serialize data to iCalendar format.
 
   Supported options for serializing a calendar:
-  * `vendor` a string containing the vendor's name. Will produce `PRODID:-//ICalendar//My Name//EN`.
+
+    * `vendor` a string containing the vendor's name. Will produce
+      `PRODID:-//ICalendar//My Name//EN`.
   """
   def to_ics(data, options \\ [])
 end

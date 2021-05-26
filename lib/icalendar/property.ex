@@ -1,6 +1,6 @@
 defmodule ICalendar.Property do
   @moduledoc """
-  Provide structure to define properties of an Event
+  Provide structure to define properties of an Event.
   """
 
   defstruct key: nil,

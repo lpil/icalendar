@@ -1,24 +1,20 @@
 defmodule ICalendar.Mixfile do
   use Mix.Project
 
+  @source_url "https://github.com/lpil/icalendar"
   @version "1.1.0"
 
   def project do
     [
       app: :icalendar,
+      name: "ICalendar",
       version: @version,
       elixir: "~> 1.9",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      name: "ICalendar",
-      source_url: "https://github.com/lpil/icalendar",
-      description: "An ICalendar file generator",
-      package: [
-        maintainers: ["Louis Pilfold"],
-        licenses: ["MIT"],
-        links: %{"GitHub" => "https://github.com/lpil/icalendar"}
-      ]
+      docs: docs(),
+      package: package()
     ]
   end
 
@@ -28,16 +24,35 @@ defmodule ICalendar.Mixfile do
 
   defp deps do
     [
-      # Automatic test runner
+      {:timex, "~> 3.4"},
       {:mix_test_watch, ">= 0.0.0", only: :dev},
+      {:ex_doc, ">= 0.0.0", only: [:dev, :test], runtime: false}
+    ]
+  end
 
-      # Markdown processor
-      {:earmark, "~> 1.3", only: [:dev, :test]},
-      # Documentation generator
-      {:ex_doc, "~> 0.19", only: [:dev, :test]},
+  defp package do
+    [
+      description: "An ICalendar file generator",
+      maintainers: ["Louis Pilfold"],
+      licenses: ["MIT"],
+      links: %{
+        "Changelog" => "https://hexdocs.pm/icalendar/changelog.html",
+        "GitHub" => @source_url
+      }
+    ]
+  end
 
-      # For full timezone support
-      {:timex, "~> 3.4"}
+  defp docs do
+    [
+      extras: [
+        "CHANGELOG.md",
+        "LICENSE.md": [title: "License"],
+        "README.md": [title: "Overview"]
+      ],
+      main: "readme",
+      source_url: @source_url,
+      source_ref: "v#{@version}",
+      formatters: ["html"]
     ]
   end
 end
