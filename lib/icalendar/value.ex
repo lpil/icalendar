@@ -68,7 +68,7 @@ defimpl Value, for: DateTime do
 
   @doc """
   This function converts DateTimes to UTC timezone and then into Strings in the
-  iCal format
+  iCal format.
   """
   def to_ics(%DateTime{} = timestamp) do
     format_string = "{YYYY}{0M}{0D}T{h24}{m}{s}"
@@ -86,7 +86,7 @@ defimpl Value, for: Date do
 
   @doc """
   This function converts DateTimes to UTC timezone and then into Strings in the
-  iCal format
+  iCal format.
   """
   def to_ics(%Date{} = timestamp) do
     format_string = "{YYYY}{0M}{0D}"

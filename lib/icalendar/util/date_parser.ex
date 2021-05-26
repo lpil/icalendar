@@ -3,50 +3,62 @@ defmodule ICalendar.Util.DateParser do
   Responsible for parsing datestrings in predefined formats with `parse/1` and
   `parse/2`.
 
-  Credit to @fazibear for this module
+  Credit to @fazibear for this module.
   """
 
   @doc """
   Responsible for parsing datestrings in predefined formats into %DateTime{}
   structs. Valid formats are defined by the "Internet Calendaring and Scheduling
   Core Object Specification" (RFC 2445).
+
     - **Full text:**      http://www.ietf.org/rfc/rfc2445.txt
     - **DateTime spec:**  http://www.kanzaki.com/docs/ical/dateTime.html
     - **Date spec:**      http://www.kanzaki.com/docs/ical/date.html
+
   ## Valid Formats
+
   The format is based on the [ISO 8601] complete representation, basic format
   for a calendar date and time of day. The text format is a concatenation of
   the "date", followed by the LATIN CAPITAL LETTER T character (US-ASCII
   decimal 84) time designator, followed by the "time" format.
+
     1. **<YYYYMMDD>T<HHMMSS>** -
        The date with local time form is simply a date-time value that does not
        contain the UTC designator nor does it reference a time zone. For
        example, the following represents Janurary 18, 1998, at 11 PM:
            19980118T230000
+
     2. **<YYYYMMDD>T<HHMMSS>Z** -
        The date with UTC time, or absolute time, is identified by a LATIN
        CAPITAL LETTER Z suffix character (US-ASCII decimal 90), the UTC
        designator, appended to the time value. For example, the following
        represents January 19, 1998, at 0700 UTC:
            19980119T070000Z
+
   The format for the date value type is expressed as the [ISO 8601] complete
   representation, basic format for a calendar date. The textual format
   specifies a four-digit year, two-digit month, and two-digit day of the
   month. There are no separator characters between the year, month and day
   component text.
+
     3. **<YYYYMMDD>** -
       The following represents July 14, 1997:
             19970714
+
     4. **<YYYYMMDD>Z** -
        A basic date in absolute time. The following represents July 14, 1997 UTC:
             19970714Z
+
   ## Resulting Timezone
-    If the datestring has a Zulu time indicator (ending in "Z"), then the
-    returned %DateTime{} will be in UTC, regardless of the inputted tzid.
-    If the tzid is a valid tzid (ex. "America/New_York"), `parse/2` will return
-    a %DateTime{} with the given timezone.
-    Otherwise, if `parse/1` is used or `parse/2` is used with a `nil` tzid,
-    the returned %DateTime{} will be in the local timezone.
+
+  If the datestring has a Zulu time indicator (ending in "Z"), then the
+  returned %DateTime{} will be in UTC, regardless of the inputted tzid.
+
+  If the tzid is a valid tzid (ex. "America/New_York"), `parse/2` will return
+  a %DateTime{} with the given timezone.
+
+  Otherwise, if `parse/1` is used or `parse/2` is used with a `nil` tzid,
+  the returned %DateTime{} will be in the local timezone.
   """
 
   @type valid_timezone :: String.t() | :utc | :local

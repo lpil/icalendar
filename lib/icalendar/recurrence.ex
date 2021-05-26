@@ -1,10 +1,11 @@
 defmodule ICalendar.Recurrence do
   @moduledoc """
   Adds support for recurring events.
+
   Events can recur by frequency, count, interval, and/or start/end date. To
   see the specific rules and examples, see `add_recurring_events/2` below.
 
-  Credit to @fazibear for this module
+  Credit to @fazibear for this module.
   """
 
   alias ICalendar.Event
@@ -14,48 +15,63 @@ defmodule ICalendar.Recurrence do
 
   @doc """
   Given an event, return a stream of recurrences for that event.
+
   Warning: this may create a very large sequence of event recurrences.
 
   ## Parameters
+
     - `event`: The event that may contain an rrule. See `ICalendar.Event`.
+
     - `end_date` *(optional)*: A date time that represents the fallback end date
       for a recurring event. This value is only used when the options specified
       in rrule result in an infinite recurrance (ie. when neither `count` nor
       `until` is set). If no end_date is set, it will default to
       `DateTime.utc_now()`.
+
   ## Event rrule options
+
     Event recurrance details are specified in the `rrule`. The following options
     are considered:
+
     - `freq`: Represents how frequently the event recurs. Allowed frequencies
       are `DAILY`, `WEEKLY`, and `MONTHLY`. These can be further modified by
       the `interval` option.
+
     - `count` *(optional)*: Represents the number of times that an event will
       recur. This takes precedence over the `end_date` parameter and the
       `until` option.
+
     - `interval` *(optional)*: Represents the interval at which events occur.
       This option works in concert with `freq` above; by using the `interval`
       option, an event could recur every 5 days or every 3 weeks.
+
     - `until` *(optional)*: Represents the end date for a recurring event.
       This takes precedence over the `end_date` parameter.
+
     - `byday` *(optional)*: Represents the days of the week at which events occur.
+
     The `freq` option is required for a valid rrule, but the others are
     optional. They may be used either individually (ex. just `freq`) or in
     concert (ex. `freq` + `interval` + `until`).
+
   ## Future rrule options (not yet supported)
+
     - `byhour` *(optional)*: Represents the hours of the day at which events occur.
     - `byweekno` *(optional)*: Represents the week number at which events occur.
     - `bymonthday` *(optional)*: Represents the days of the month at which events occur.
     - `bymonth` *(optional)*: Represents the months at which events occur.
     - `byyearday` *(optional)*: Represents the days of the year at which events occur.
+
   ## Examples
+
       iex> dt = Timex.Date.from({2016,8,13})
       iex> dt_end = Timex.Date.from({2016, 8, 23})
       iex> event = %ICalendar.Event{rrule:%{freq: "DAILY"}, dtstart: dt, dtend: dt}
       iex> recurrences =
             ICalendar.Recurrence.get_recurrences(event)
             |> Enum.to_list()
-  """
 
+  """
   @spec get_recurrences(%Event{}) :: %Stream{}
   @spec get_recurrences(%Event{}, %DateTime{}) :: %Stream{}
   def get_recurrences(event, end_date \\ DateTime.utc_now()) do

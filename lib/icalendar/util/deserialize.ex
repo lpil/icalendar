@@ -1,6 +1,6 @@
 defmodule ICalendar.Util.Deserialize do
   @moduledoc """
-  Deserialize ICalendar Strings into Event structs
+  Deserialize ICalendar Strings into Event structs.
   """
 
   alias ICalendar.Event
@@ -19,6 +19,7 @@ defmodule ICalendar.Util.Deserialize do
 
       iex> ICalendar.Util.Deserialize.retrieve_kvs("lorem:ipsum")
       %ICalendar.Property{key: "LOREM", params: %{}, value: "ipsum"}
+
   """
   def retrieve_kvs(line) do
     # Split Line up into key and value
@@ -47,6 +48,7 @@ defmodule ICalendar.Util.Deserialize do
       iex> ICalendar.Util.Deserialize.retrieve_params(
       ...>   "KEY;LOREM=ipsum;DOLOR=sit")
       ["KEY", %{"LOREM" => "ipsum", "DOLOR" => "sit"}]
+
   """
   def retrieve_params(key) do
     [key | params] = String.split(key, ";", trim: true)

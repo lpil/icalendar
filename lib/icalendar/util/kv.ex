@@ -1,6 +1,6 @@
 defmodule ICalendar.Util.KV do
   @moduledoc """
-  Build ICalendar key-value strings
+  Build ICalendar key-value strings.
   """
 
   alias ICalendar.Value
