@@ -181,6 +181,26 @@ defmodule ICalendarTest do
     assert events |> List.first() == new_event
   end
 
+  test "ICalender.to_ics/1 -> ICalendar.from_ics/1 and back again, with newlines" do
+    events = [
+      %ICalendar.Event{
+        summary: "Film with Amy and Adam",
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
+        description: "First line\nThis is a new line\n\nDouble newline",
+        location: "123 Fun Street, Toronto ON, Canada",
+        url: "http://www.example.com"
+      }
+    ]
+
+    [new_event] =
+      %ICalendar{events: events}
+      |> ICalendar.to_ics(vendor: @vendor)
+      |> ICalendar.from_ics()
+
+    assert events |> List.first() == new_event
+  end
+
   test "encode_to_iodata/2" do
     events = [
       %ICalendar.Event{

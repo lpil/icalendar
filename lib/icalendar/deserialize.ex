@@ -12,6 +12,7 @@ defimpl ICalendar.Deserialize, for: BitString do
     |> String.trim()
     |> String.split("\n")
     |> Enum.map(&String.trim_trailing/1)
+    |> Enum.map(&String.replace(&1, ~S"\n", "\n"))
     |> get_events()
   end
 
