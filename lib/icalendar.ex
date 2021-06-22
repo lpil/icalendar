@@ -43,11 +43,16 @@ defimpl ICalendar.Serialize, for: ICalendar do
     events = Enum.map(calendar.events, &ICalendar.Serialize.to_ics/1)
     vendor = Keyword.get(options, :vendor, "Elixir ICalendar")
 
+    headers = options
+              |> Keyword.get(:headers, [])
+              |> Enum.map(fn({k,v}) -> "\n#{k}:#{v}" end)
+              |> Enum.join("\n")
+
     """
     BEGIN:VCALENDAR
     CALSCALE:GREGORIAN
     VERSION:2.0
-    PRODID:-//Elixir ICalendar//#{vendor}//EN
+    PRODID:-//Elixir ICalendar//#{vendor}//EN#{headers}
     #{events}END:VCALENDAR
     """
   end
