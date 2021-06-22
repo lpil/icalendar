@@ -9,6 +9,8 @@
 
 A small library for reading and writing ICalendar files.
 
+**This library is in maintenance mode**. Bug fixes will be accepted but no new features will be added. If you wish to add new features I recommend creating and publishing a fork. If an active fork is created I will direct users from this project to the new one.
+
 ## Installation
 
 The package can be installed by adding `:icalendar` to your list of dependencies
