@@ -49,6 +49,41 @@ defmodule ICalendar.DeserializeTest do
       assert event.dtend.time_zone == "America/Chicago"
     end
 
+    test "with custom Timezone won't crash" do
+      ics = """
+      BEGIN:VTIMEZONE
+      TZID:Eastern Standard Time 1
+      BEGIN:STANDARD
+      DTSTART:16010101T000000
+      TZOFFSETFROM:-0500
+      TZOFFSETTO:-0500
+      END:STANDARD
+      END:VTIMEZONE
+      BEGIN:VEVENT
+      DTEND;TZID=Eastern Standard Time 1:22221224T084500
+      DTSTART;TZID=Eastern Standard Time 1:22221224T083000
+      END:VEVENT
+      """
+
+      [event] = ICalendar.from_ics(ics)
+      assert event.dtstart.time_zone == "Etc/UTC"
+      assert event.dtend.time_zone == "Etc/UTC"
+    end
+
+    test "with rrule exceptions" do
+      ics = """
+      BEGIN:VEVENT
+      RRULE:FREQ=WEEKLY
+      EXDATE;TZID=Eastern Standard Time:20201126T091500,20201127T091500
+      DTSTART;TZID=Eastern Standard Time:20201023T091500
+      DTEND;TZID=Eastern Standard Time:20201023T093000
+      END:VEVENT
+      """
+
+      [event] = ICalendar.from_ics(ics)
+      assert length(event.exdates) == 2
+    end
+
     test "with CR+LF line endings" do
       ics = """
       BEGIN:VEVENT

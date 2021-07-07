@@ -104,12 +104,19 @@ defmodule ICalendar.Util.Deserialize do
   end
 
   def parse_attr(
-        %Property{key: "EXDATE", value: exdate, params: params},
+        %Property{key: "EXDATE", value: new_exdates, params: params},
         acc
       ) do
     exdates = Map.get(acc, :exdates, [])
-    {:ok, timestamp} = to_date(exdate, params)
-    %{acc | exdates: [timestamp | exdates]}
+
+    new_dates =
+      String.split(new_exdates, ",")
+      |> Enum.map(fn exdate ->
+        {:ok, timestamp} = to_date(exdate, params)
+        timestamp
+      end)
+
+    %{acc | exdates: Enum.concat(new_dates, exdates)}
   end
 
   def parse_attr(
@@ -240,8 +247,13 @@ defmodule ICalendar.Util.Deserialize do
       if Regex.match?(~r/\//, timezone) do
         timezone
       else
-        Timex.Timezone.Utils.to_olson(timezone)
-      end
+        try do
+          Timex.Timezone.Utils.to_olson(timezone)
+        rescue
+          # probably a custom timezone defined in this file
+          _e -> nil
+        end
+      end || "UTC"
 
     date_string =
       case String.last(date_string) do
