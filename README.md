@@ -5,7 +5,6 @@
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/icalendar/)
 [![Total Download](https://img.shields.io/hexpm/dt/icalendar.svg)](https://hex.pm/packages/icalendar)
 [![License](https://img.shields.io/hexpm/l/icalendar.svg)](https://github.com/lpil/icalendar/blob/master/LICENSE.md)
-[![Last Updated](https://img.shields.io/github/last-commit/lpil/icalendar.svg)](https://github.com/lpil/icalendar/commits/master)
 
 A small library for reading and writing ICalendar files.
 
