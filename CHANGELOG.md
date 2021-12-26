@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.1.1 - 2021-12-26
+
+- Fixed a bug where newlines were incorrectly handled.
+
 ## v1.1.0 - 2020-10-06
 
 - The `ICalendar.Recurrence.get_recurrences` function has been added to enable
