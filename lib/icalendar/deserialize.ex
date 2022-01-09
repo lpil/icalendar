@@ -10,10 +10,18 @@ defimpl ICalendar.Deserialize, for: BitString do
   def from_ics(ics) do
     ics
     |> String.trim()
+    |> adjust_wrapped_lines()
     |> String.split("\n")
     |> Enum.map(&String.trim_trailing/1)
     |> Enum.map(&String.replace(&1, ~S"\n", "\n"))
     |> get_events()
+  end
+
+  # Copy approach from Ruby library to deal with Google Calendar's wrapping
+  # https://github.com/icalendar/icalendar/blob/14db8fdd36f9007fa2627b2c10a9cdf3c9f8f35a/lib/icalendar/parser.rb#L9-L22
+  # See https://github.com/lpil/icalendar/issues/53 for discussion
+  defp adjust_wrapped_lines(body) do
+    String.replace(body, ~r/\r?\n[ \t]/, "")
   end
 
   defp get_events(calendar_data, event_collector \\ [], temp_collector \\ [])
