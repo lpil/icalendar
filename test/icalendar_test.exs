@@ -27,6 +27,19 @@ defmodule ICalendarTest do
            """
   end
 
+  test "ICalendar.to_ics/1 of empty calendar with custom headers" do
+    ics = %ICalendar{} |> ICalendar.to_ics(headers: [{"METHOD", "REQUEST"}])
+
+    assert ics == """
+           BEGIN:VCALENDAR
+           CALSCALE:GREGORIAN
+           VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
+           METHOD:REQUEST
+           END:VCALENDAR
+           """
+  end
+
   test "ICalendar.to_ics/1 of a calendar with an event, as in README" do
     events = [
       %ICalendar.Event{
