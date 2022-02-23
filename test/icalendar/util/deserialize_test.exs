@@ -74,7 +74,7 @@ defmodule ICalendar.Util.DeserializeTest do
     assert %Event{} = event
   end
 
-  test "Include ORGANIZER and ATTENDEEs in event" do
+  test "Include ORGANIZER w/ params and ATTENDEEs in event" do
     event =
       """
       BEGIN:VEVENT
@@ -99,7 +99,8 @@ defmodule ICalendar.Util.DeserializeTest do
       |> String.split("\n")
       |> Deserialize.build_event()
 
-    assert %Event{} = event
+    assert %Event{organizer: organizer} = event
+    assert %{:original_value => "mailto:paul@clockk.com", "CN" => "paul@clockk.com"} = organizer
   end
 
   test "Convert other time zone formats to UTC" do
