@@ -85,6 +85,19 @@ defmodule ICalendar.DeserializeTest do
       assert event.dtend.time_zone == "America/Chicago"
     end
 
+    test "with unrecognized Timezone" do
+      ics = """
+      BEGIN:VEVENT
+      DTEND;TZID=GMT-0500:22221224T084500
+      DTSTART;TZID=GMT-0500:22221224T083000
+      END:VEVENT
+      """
+
+      [event] = ICalendar.from_ics(ics)
+      assert event.dtstart.time_zone == "Etc/UTC"
+      assert event.dtend.time_zone == "Etc/UTC"
+    end
+
     test "with CR+LF line endings" do
       ics = """
       BEGIN:VEVENT
