@@ -236,12 +236,7 @@ defmodule ICalendar.Util.Deserialize do
   def to_date(date_string, %{"TZID" => timezone}) do
     # Microsoft Outlook calendar .ICS files report times in Greenwich Standard Time (UTC +0)
     # so just convert this to UTC
-    timezone =
-      if Regex.match?(~r/\//, timezone) do
-        timezone
-      else
-        Timex.Timezone.Utils.to_olson(timezone)
-      end
+    timezone = parse_timezone(timezone)
 
     date_string =
       case String.last(date_string) do
@@ -262,6 +257,21 @@ defmodule ICalendar.Util.Deserialize do
 
   def to_date(date_string) do
     to_date(date_string, %{"TZID" => "Etc/UTC"})
+  end
+
+  defp parse_timezone(timezone) do
+    tz =
+      if Regex.match?(~r/\//, timezone) do
+        timezone
+      else
+        Timex.Timezone.Utils.to_olson(timezone)
+      end
+
+    if is_nil(tz) do
+      "Etc/UTC"
+    else
+      tz
+    end
   end
 
   defp to_geo(geo) do
