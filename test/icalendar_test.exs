@@ -32,12 +32,14 @@ defmodule ICalendarTest do
       %ICalendar.Event{
         summary: "Film with Amy and Adam",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 23}, {19, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars."
       },
       %ICalendar.Event{
         summary: "Morning meeting",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {19, 00, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {15, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {22, 30, 00}}),
         description: "A big long meeting with lots of details."
       }
@@ -53,12 +55,14 @@ defmodule ICalendarTest do
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
            DTEND:20151224T084500Z
+           DTSTAMP:20151223T190000Z
            DTSTART:20151224T083000Z
            SUMMARY:Film with Amy and Adam
            END:VEVENT
            BEGIN:VEVENT
            DESCRIPTION:A big long meeting with lots of details.
            DTEND:20151224T223000Z
+           DTSTAMP:20151224T150000Z
            DTSTART:20151224T190000Z
            SUMMARY:Morning meeting
            END:VEVENT
@@ -71,6 +75,7 @@ defmodule ICalendarTest do
       %ICalendar.Event{
         summary: "Film with Amy and Adam",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {8, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars, and have fun.",
         location: "123 Fun Street, Toronto ON, Canada"
@@ -87,6 +92,7 @@ defmodule ICalendarTest do
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars\\, and have fun.
            DTEND:20151224T084500Z
+           DTSTAMP:20151224T080000Z
            DTSTART:20151224T083000Z
            LOCATION:123 Fun Street\\, Toronto ON\\, Canada
            SUMMARY:Film with Amy and Adam
@@ -100,6 +106,7 @@ defmodule ICalendarTest do
       %ICalendar.Event{
         summary: "Film with Amy and Adam",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {8, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars, and have fun.",
         location: "123 Fun Street, Toronto ON, Canada",
@@ -117,6 +124,7 @@ defmodule ICalendarTest do
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars\\, and have fun.
            DTEND:20151224T084500Z
+           DTSTAMP:20151224T080000Z
            DTSTART:20151224T083000Z
            LOCATION:123 Fun Street\\, Toronto ON\\, Canada
            SUMMARY:Film with Amy and Adam
@@ -129,6 +137,7 @@ defmodule ICalendarTest do
   test "Icalender.to_ics/1 with rrule and exdates" do
     events = [
       %ICalendar.Event{
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {8, 00, 00}}),
         rrule: %{
           byday: ["TH", "WE"],
           freq: "WEEKLY",
@@ -153,9 +162,38 @@ defmodule ICalendarTest do
            VERSION:2.0
            PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
            BEGIN:VEVENT
+           DTSTAMP:20151224T080000Z
            EXDATE;TZID=America/Toronto:20200916T143000
            EXDATE;TZID=America/Toronto:20200917T143000
            RRULE:FREQ=WEEKLY;BYDAY=TH,WE;BYSETPOS=-1;INTERVAL=-2;UNTIL=20201204T045959
+           END:VEVENT
+           END:VCALENDAR
+           """
+  end
+
+  test "Icalender.to_ics/1 with default value for DTSTAMP" do
+    events = [
+      %ICalendar.Event{
+        summary: "Film with Amy and Adam",
+        dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
+        description: "Let's go see Star Wars, and have fun."
+      }
+    ]
+
+    ics = %ICalendar{events: events} |> ICalendar.to_ics()
+
+    assert ics == """
+           BEGIN:VCALENDAR
+           CALSCALE:GREGORIAN
+           VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
+           BEGIN:VEVENT
+           DESCRIPTION:Let's go see Star Wars\\, and have fun.
+           DTEND:20151224T084500Z
+           DTSTAMP:#{ICalendar.Value.to_ics(DateTime.utc_now())}Z
+           DTSTART:20151224T083000Z
+           SUMMARY:Film with Amy and Adam
            END:VEVENT
            END:VCALENDAR
            """
@@ -166,6 +204,7 @@ defmodule ICalendarTest do
       %ICalendar.Event{
         summary: "Film with Amy and Adam",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {8, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars, and have fun.",
         location: "123 Fun Street, Toronto ON, Canada",
@@ -187,6 +226,7 @@ defmodule ICalendarTest do
         summary: "Film with Amy and Adam",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
+        dtstamp: Timex.to_datetime({{2017, 12, 24}, {8, 00, 00}}),
         description: "First line\nThis is a new line\n\nDouble newline",
         location: "123 Fun Street, Toronto ON, Canada",
         url: "http://www.example.com"
@@ -206,12 +246,14 @@ defmodule ICalendarTest do
       %ICalendar.Event{
         summary: "Film with Amy and Adam",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {8, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars."
       },
       %ICalendar.Event{
         summary: "Morning meeting",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {19, 00, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {18, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {22, 30, 00}}),
         description: "A big long meeting with lots of details."
       }
@@ -229,12 +271,14 @@ defmodule ICalendarTest do
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
            DTEND:20151224T084500Z
+           DTSTAMP:20151224T080000Z
            DTSTART:20151224T083000Z
            SUMMARY:Film with Amy and Adam
            END:VEVENT
            BEGIN:VEVENT
            DESCRIPTION:A big long meeting with lots of details.
            DTEND:20151224T223000Z
+           DTSTAMP:20151224T180000Z
            DTSTART:20151224T190000Z
            SUMMARY:Morning meeting
            END:VEVENT
@@ -247,12 +291,14 @@ defmodule ICalendarTest do
       %ICalendar.Event{
         summary: "Film with Amy and Adam",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {8, 30, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {8, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 00}}),
         description: "Let's go see Star Wars."
       },
       %ICalendar.Event{
         summary: "Morning meeting",
         dtstart: Timex.to_datetime({{2015, 12, 24}, {19, 00, 00}}),
+        dtstamp: Timex.to_datetime({{2015, 12, 24}, {18, 00, 00}}),
         dtend: Timex.to_datetime({{2015, 12, 24}, {22, 30, 00}}),
         description: "A big long meeting with lots of details."
       }
@@ -270,12 +316,14 @@ defmodule ICalendarTest do
            BEGIN:VEVENT
            DESCRIPTION:Let's go see Star Wars.
            DTEND:20151224T084500Z
+           DTSTAMP:20151224T080000Z
            DTSTART:20151224T083000Z
            SUMMARY:Film with Amy and Adam
            END:VEVENT
            BEGIN:VEVENT
            DESCRIPTION:A big long meeting with lots of details.
            DTEND:20151224T223000Z
+           DTSTAMP:20151224T180000Z
            DTSTART:20151224T190000Z
            SUMMARY:Morning meeting
            END:VEVENT

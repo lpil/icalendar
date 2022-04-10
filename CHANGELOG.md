@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+- Add support for the `DTSTAMP` field.
+  If not provided, it is initialized to the current UTC DateTime when serializing.
+
 ## v1.1.2 - 2022-01-16
 
 - Handle calendars that wrap output such as Google Calendar
