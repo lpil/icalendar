@@ -37,6 +37,13 @@ defimpl ICalendar.Deserialize, for: BitString do
         event = Deserialize.build_event(temp_collector ++ [head])
         get_events(calendar_data, [event] ++ event_collector, [])
 
+      "BEGIN:" <> component_name when component_name not in ["VCALENDAR", "VEVENT"] ->
+        # any other component is rejected
+        {_, [_ | lines_rest]} =
+          Enum.split_while(calendar_data, &(!match?("END:" <> ^component_name, &1)))
+
+        get_events(lines_rest, event_collector, temp_collector)
+
       event_property when temp_collector != [] ->
         get_events(calendar_data, event_collector, temp_collector ++ [event_property])
 
