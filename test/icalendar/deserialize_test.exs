@@ -143,5 +143,22 @@ defmodule ICalendar.DeserializeTest do
       [event] = ICalendar.from_ics(ics)
       assert event.description == "Escape from the world. Stare at some water."
     end
+
+    test "with ORGANIZER having CN parameter" do
+      ics = """
+      BEGIN:VEVENT
+      DTEND;TZID=America/Chicago:22221224T084500
+      DTSTART;TZID=America/Chicago:22221224T083000
+      ORGANIZER;CN=Oliver Deschamps-O'neil:mailto:odeschampsoneil@localhost
+      END:VEVENT
+      """
+
+      [event] = ICalendar.from_ics(ics)
+
+      assert event.organizer == %{
+               :original_value => "mailto:odeschampsoneil@localhost",
+               "CN" => "Oliver Deschamps-O'neil"
+             }
+    end
   end
 end
