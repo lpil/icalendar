@@ -236,6 +236,10 @@ defmodule ICalendar.Util.Deserialize do
   def to_date(date_string, %{"TZID" => timezone}) do
     # Microsoft Outlook calendar .ICS files report times in Greenwich Standard Time (UTC +0)
     # so just convert this to UTC
+
+    # In some weird cases, the timezone is wrapped in quotes like so :
+    # "\"E. South America Standard Time\""
+    timezone = String.replace(timezone, "\"", "")
     timezone =
       if Regex.match?(~r/\//, timezone) do
         timezone
