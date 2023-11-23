@@ -42,12 +42,14 @@ defimpl ICalendar.Serialize, for: ICalendar do
   def to_ics(calendar, options \\ []) do
     events = Enum.map(calendar.events, &ICalendar.Serialize.to_ics/1)
     vendor = Keyword.get(options, :vendor, "Elixir ICalendar")
+    name = Keyword.get(options, :name, "Elixir ICalendar")
 
     """
     BEGIN:VCALENDAR
     CALSCALE:GREGORIAN
     VERSION:2.0
     PRODID:-//Elixir ICalendar//#{vendor}//EN
+    X-WR-CALNAME:#{name}
     #{events}END:VCALENDAR
     """
   end
