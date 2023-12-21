@@ -6,6 +6,10 @@ defprotocol ICalendar.Serialize do
 
     * `vendor` a string containing the vendor's name. Will produce
       `PRODID:-//ICalendar//My Name//EN`.
+    * `name` a string containing the calendar's name. Will produce
+      `X-WR-CALNAME:Calendar Name`.
+    * `id` a string containing the calendar's id. Will produce
+      `X-WR-RELCALID:123456`.
   """
   def to_ics(data, options \\ [])
 end

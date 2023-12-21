@@ -155,8 +155,24 @@ defmodule ICalendarTest do
            BEGIN:VEVENT
            EXDATE;TZID=America/Toronto:20200916T143000
            EXDATE;TZID=America/Toronto:20200917T143000
-           RRULE:FREQ=WEEKLY;BYDAY=TH,WE;BYSETPOS=-1;INTERVAL=-2;UNTIL=20201204T045959
+           RRULE:FREQ=WEEKLY;UNTIL=20201204T045959;INTERVAL=-2;BYDAY=TH,WE;BYSETPOS=-1
            END:VEVENT
+           END:VCALENDAR
+           """
+  end
+
+  test "ICalendar.to_ics/2 with calendar options" do
+    ics =
+      %ICalendar{events: []}
+      |> ICalendar.to_ics(name: "Calendar Name", id: "123456")
+
+    assert ics == """
+           BEGIN:VCALENDAR
+           CALSCALE:GREGORIAN
+           VERSION:2.0
+           PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
+           X-WR-CALNAME:Calendar Name
+           X-WR-RELCALID:123456
            END:VCALENDAR
            """
   end

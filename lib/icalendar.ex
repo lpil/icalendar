@@ -41,16 +41,28 @@ end
 defimpl ICalendar.Serialize, for: ICalendar do
   def to_ics(calendar, options \\ []) do
     events = Enum.map(calendar.events, &ICalendar.Serialize.to_ics/1)
-    vendor = Keyword.get(options, :vendor, "Elixir ICalendar")
-    name = Keyword.get(options, :name, "Elixir ICalendar")
 
     """
     BEGIN:VCALENDAR
     CALSCALE:GREGORIAN
     VERSION:2.0
-    PRODID:-//Elixir ICalendar//#{vendor}//EN
-    X-WR-CALNAME:#{name}
+    #{calendar_attributes(options)}
     #{events}END:VCALENDAR
     """
   end
+
+  defp calendar_attributes(options) do
+    vendor = Keyword.get(options, :vendor, "Elixir ICalendar")
+    name = Keyword.get(options, :name)
+    id = Keyword.get(options, :id)
+
+    [vendor: vendor, name: name, id: id]
+    |> Enum.reject(fn {_, v} -> is_nil(v) or v == "" end)
+    |> Enum.map(&attribute/1)
+    |> Enum.join("\n")
+  end
+
+  defp attribute({:vendor, vendor}), do: "PRODID:-//Elixir ICalendar//#{vendor}//EN"
+  defp attribute({:name, name}), do: "X-WR-CALNAME:#{name}"
+  defp attribute({:id, id}), do: "X-WR-RELCALID:#{id}"
 end
