@@ -282,4 +282,40 @@ defmodule ICalendarTest do
            END:VCALENDAR
            """
   end
+
+  test "Icalender.from_ics/1 with multiple exdate values" do
+    ics = """
+    BEGIN:VCALENDAR
+    CALSCALE:GREGORIAN
+    VERSION:2.0
+    PRODID:-//Elixir ICalendar//Elixir ICalendar//EN
+    BEGIN:VEVENT
+    EXDATE;TZID=Eastern Standard Time:20231108T083000,20231220T083000
+    EXDATE;TZID=Eastern Standard Time:20231115T083000
+    EXDATE:19960402T010000Z,19960403T010000Z,19960404T010000Z
+    RRULE:FREQ=WEEKLY;BYDAY=TH,WE;BYSETPOS=-1;INTERVAL=-2;UNTIL=20201204T045959
+    END:VEVENT
+    END:VCALENDAR
+    """
+
+    assert ICalendar.from_ics(ics) == [
+             %ICalendar.Event{
+               rrule: %{
+                 byday: ["TH", "WE"],
+                 freq: "WEEKLY",
+                 bysetpos: [-1],
+                 interval: -2,
+                 until: ~U[2020-12-04 04:59:59Z]
+               },
+               exdates: [
+                 ~U[1996-04-04 01:00:00Z],
+                 ~U[1996-04-03 01:00:00Z],
+                 ~U[1996-04-02 01:00:00Z],
+                 Timex.Timezone.convert(~U[2023-11-15 13:30:00Z], "America/New_York"),
+                 Timex.Timezone.convert(~U[2023-12-20 13:30:00Z], "America/New_York"),
+                 Timex.Timezone.convert(~U[2023-11-08 13:30:00Z], "America/New_York")
+               ]
+             }
+           ]
+  end
 end
