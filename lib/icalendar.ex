@@ -3,7 +3,15 @@ defmodule ICalendar do
   Generating ICalendars.
   """
 
-  defstruct events: []
+  defstruct events: [],
+            timezones: [],
+            alarms: []
+
+  @type t :: %__MODULE__{
+          events: [ICalendar.Event.t()],
+          timezones: [ICalendar.Timezone.t()]
+        }
+
   defdelegate to_ics(events, options \\ []), to: ICalendar.Serialize
   defdelegate from_ics(events), to: ICalendar.Deserialize
 
@@ -41,6 +49,9 @@ end
 defimpl ICalendar.Serialize, for: ICalendar do
   def to_ics(calendar, options \\ []) do
     events = Enum.map(calendar.events, &ICalendar.Serialize.to_ics/1)
+    timezones = Enum.map(calendar.timezones, &ICalendar.Serialize.to_ics/1)
+    alarms = Enum.map(calendar.alarms, &ICalendar.Serialize.to_ics/1)
+
     vendor = Keyword.get(options, :vendor, "Elixir ICalendar")
 
     """
@@ -48,7 +59,7 @@ defimpl ICalendar.Serialize, for: ICalendar do
     CALSCALE:GREGORIAN
     VERSION:2.0
     PRODID:-//Elixir ICalendar//#{vendor}//EN
-    #{events}END:VCALENDAR
+    #{timezones}#{events}#{alarms}END:VCALENDAR
     """
   end
 end

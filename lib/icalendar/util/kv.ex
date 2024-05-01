@@ -106,6 +106,36 @@ defmodule ICalendar.Util.KV do
     |> Enum.join("")
   end
 
+  def build("ATTACHMENTS", attachments) do
+    Enum.map(attachments, fn attachment ->
+      params =
+        for {key, val} <- attachment, key != :original_value, into: "" do
+          ";#{key}=#{val}"
+        end
+
+      "ATTACH#{params}:#{attachment.original_value}\n"
+    end)
+    |> Enum.join("")
+  end
+
+  def build("ORGANIZER", organizer) do
+    params =
+      for {key, val} <- organizer, key != :original_value, into: "" do
+        ";#{key}=#{val}"
+      end
+
+    "ORGANIZER#{params}:#{organizer.original_value}\n"
+  end
+
+  def build(key, value) when key in ["TZOFFSETFROM", "TZOFFSETTO"] and is_integer(value) do
+    value =
+      value
+      |> then(&if(&1 < 0, do: {"-", "#{&1 * -1}"}, else: {"+", "#{&1}"}))
+      |> then(fn {h, m} -> "#{h}#{String.pad_leading(m, 4, "0")}" end)
+
+    "#{key}:#{value}\n"
+  end
+
   def build(key, date = %DateTime{time_zone: "Etc/UTC"}) do
     "#{key}:#{Value.to_ics(date)}Z\n"
   end
@@ -127,3 +157,26 @@ defmodule ICalendar.Util.KV do
     |> String.replace(~r{([\,;])}, "\\\\\\g{1}")
   end
 end
+
+%ICalendar.Event{
+  uid: Base.encode16(:crypto.strong_rand_bytes(16), case: :lower),
+  summary: "Film with Amy and Adam",
+  dtstamp: Timex.now(),
+  dtstart: {{2015, 12, 24}, {8, 30, 00}},
+  dtend: {{2015, 12, 24}, {8, 45, 00}},
+  description: "Let's go see Star Wars.",
+  location: "123 Fun Street, Toronto ON, Canada",
+  attendees: [
+    %{
+      "PARTSTAT" => "ACCEPTED",
+      "CN" => "eric@clockk.com",
+      original_value: "mailto:eric@clockk.com"
+    }
+  ],
+  organizer: %{
+    "CN" => "clockk.com",
+    "EMAIL" => "paul@clockk.com",
+    original_value: "mailto:paul@clockk.com"
+  },
+  tzid: "America/Sao_Paulo"
+}

@@ -9,7 +9,7 @@ defmodule ICalendar.Mixfile do
       app: :icalendar,
       name: "ICalendar",
       version: @version,
-      elixir: "~> 1.9",
+      elixir: "~> 1.14.5",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
