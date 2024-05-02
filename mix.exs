@@ -1,4 +1,4 @@
-defmodule ICalendar.Mixfile do
+defmodule ICalendar.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/lpil/icalendar"
@@ -9,7 +9,7 @@ defmodule ICalendar.Mixfile do
       app: :icalendar,
       name: "ICalendar",
       version: @version,
-      elixir: "~> 1.9",
+      elixir: "~> 1.15",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -19,14 +19,16 @@ defmodule ICalendar.Mixfile do
   end
 
   def application do
-    [applications: [:timex]]
+    [
+      extra_applications: [:timex]
+    ]
   end
 
   defp deps do
     [
-      {:timex, "~> 3.4"},
-      {:mix_test_watch, ">= 0.0.0", only: :dev},
-      {:ex_doc, ">= 0.0.0", only: [:dev, :test], runtime: false}
+      {:timex, "~> 3.7.11"},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.32.1", only: [:dev, :test], runtime: false}
     ]
   end
 
