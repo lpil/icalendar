@@ -37,6 +37,10 @@ defmodule ICalendar.Util.KV do
           "ATTENDEE;CN=James SM;PARTSTAT=ACCEPTED:mailto:james@clockk.com\n"
 
   """
+  def build("DTSTAMP", nil) do
+    "DTSTAMP:#{Value.to_ics(DateTime.utc_now())}Z\n"
+  end
+
   def build(_, nil) do
     ""
   end
@@ -92,6 +96,10 @@ defmodule ICalendar.Util.KV do
       |> Enum.join("")
 
     "RRULE:FREQ=#{freq}#{rrule_tail_part}\n"
+  end
+
+  def build("ATTACH" = key, {url, type}) do
+    "#{key};FMTTYPE=#{type}:#{url}\n"
   end
 
   def build("ATTENDEES", attendees) do
