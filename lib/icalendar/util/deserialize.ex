@@ -137,7 +137,7 @@ defmodule ICalendar.Util.Deserialize do
         %Property{key: "STATUS", value: status},
         acc
       ) do
-    %{acc | status: status |> desanitized() |> String.downcase()}
+    %{acc | status: status |> desanitized() }
   end
 
   def parse_attr(
@@ -151,7 +151,7 @@ defmodule ICalendar.Util.Deserialize do
         %Property{key: "CLASS", value: class},
         acc
       ) do
-    %{acc | class: class |> desanitized() |> String.downcase()}
+    %{acc | class: class |> desanitized()}
   end
 
   def parse_attr(
@@ -201,7 +201,7 @@ defmodule ICalendar.Util.Deserialize do
         %Property{key: "URL", value: url},
         acc
       ) do
-    %{acc | url: url |> desanitized() |> String.downcase()}
+    %{acc | url: url |> desanitized()}
   end
 
   def parse_attr(_, acc), do: acc
