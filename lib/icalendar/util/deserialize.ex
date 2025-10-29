@@ -309,7 +309,7 @@ defmodule ICalendar.Util.Deserialize do
     |> Enum.reduce(%{}, fn rule, hash ->
       [key, value] = rule |> String.split("=")
 
-      case key |> String.downcase() |> String.to_atom() do
+      case key |> String.downcase() |> String.to_existing_atom() do
         :freq ->
           hash |> Map.put(:freq, value)
 

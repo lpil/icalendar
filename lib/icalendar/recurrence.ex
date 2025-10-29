@@ -265,7 +265,7 @@ defmodule ICalendar.Recurrence do
     bydays
     |> Enum.map(fn byday ->
       if byday in @valid_days do
-        day_atom = byday |> String.downcase() |> String.to_atom()
+        day_atom = byday |> String.downcase() |> String.to_existing_atom()
 
         # determine the difference between the byday and the event's dtstart
         day_offset_for_reference = Map.get(@day_values, day_atom) - Timex.weekday(event.dtstart)
