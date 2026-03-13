@@ -4,6 +4,17 @@ defmodule ICalendar do
   """
 
   defstruct events: []
+
+  @typedoc """
+  An ICalendar struct
+
+  * `events`: A list of events
+  """
+
+  @type t :: %__MODULE__{
+          events: [ICalendar.Event.t()]
+        }
+
   defdelegate to_ics(events, options \\ []), to: ICalendar.Serialize
   defdelegate from_ics(events), to: ICalendar.Deserialize
 
