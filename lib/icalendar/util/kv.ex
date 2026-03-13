@@ -16,6 +16,10 @@ defmodule ICalendar.Util.KV do
       iex> ICalendar.Util.KV.build("foo", nil)
       ""
 
+  Organizer uses semi-colon field separator:
+      iex> ICalendar.Util.KV.build("ORGANIZER", "CN=John Smith:mailto:johnsmith@example.com")
+      "ORGANIZER;CN=John Smith:mailto:johnsmith@example.com\n"
+
   DateTime values will add timezones:
 
       iex> date =
@@ -104,6 +108,10 @@ defmodule ICalendar.Util.KV do
       "ATTENDEE#{params}:#{attendee.original_value}\n"
     end)
     |> Enum.join("")
+  end
+
+  def build("ORGANIZER", value) do
+    "ORGANIZER;#{Value.to_ics(value)}\n"
   end
 
   def build(key, date = %DateTime{time_zone: "Etc/UTC"}) do
