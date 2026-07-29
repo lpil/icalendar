@@ -24,7 +24,7 @@ defmodule ICalendar.Mixfile do
 
   defp deps do
     [
-      {:timex, github: "bitwalker/timex"},
+      {:timex, "~> 1.1"},
       {:mix_test_watch, ">= 0.0.0", only: :dev},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test], runtime: false}
     ]
